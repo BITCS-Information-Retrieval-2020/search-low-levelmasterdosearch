@@ -6,3 +6,7 @@
 search-low-levelmasterdosearch
 ## 项目成员
 朱婧婧 熊婧雯 赫宇欣 姚翛潇 程文浩 李易为 孙昊
+## 注意事项
+1. 项目成员编写代码时，建立以自己名字命名的分支
+2. 代码编写后需pull request, 不可直接提交到master分支上
+3. 测试文件、大文件请勿上传（写入.gitignore）
