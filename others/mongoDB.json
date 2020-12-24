@@ -1,0 +1,78 @@
+{
+  "_id": "doi",
+  "title": "text",
+  "authors": [
+      {
+          "firstName": "text",
+          "lastName": "text"
+      },
+      {
+          "firstName": "text",
+          "lastName": "text"           
+      }
+    ],
+  "year": "2020",
+  "publisher": "acl",
+  "keywords": [
+      "keyword",
+      "keyword"
+  ],
+  "abstract": "text",
+  "subjects": "text",
+  "paperUrl": "url", 
+  "paperPath": "path",
+  "paperContent": {
+    "text": "textall",
+    "subtitles":[
+      "subtitle1",
+      "subtitle2",
+      "..."
+    ],
+    "subtexts": [
+      "subtext1",
+      "subtext2",
+      "..."
+    ]
+  },
+  "references": [
+    {
+      "refTitle": "text",
+      "refAuthors": [
+        {
+            "refFirstName": "text",
+            "refLastName": "text"
+        },
+        {
+            "refFirstName": "text",
+            "refLastName": "text"           
+        }
+      ],
+      "refYear": "year",
+      "refPublisher": "journal"
+    },
+    {
+      "...": "..."
+    }
+  ],
+  "videoUrl": "url",
+  "videoPath": "path",
+  "videoContent":{
+    "StartTime": [
+      "time1",
+      "time2",
+      "..."
+    ],
+    "EndTime": [
+      "time1",
+      "time2",
+      "..."
+    ],
+    "videoText": [
+      "text1",
+      "text2",
+      "..."
+    ]
+  },
+  "codeUrl": "url",
+  "datasetUrl": "url"
+}
