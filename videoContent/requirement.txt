@@ -1,3 +1,0 @@
-pydub
-baidu-aip
-FFmpeg(音频和视频的解码器库)
