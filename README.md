@@ -49,6 +49,9 @@ search-low-levelmasterdosearch
 1. 项目成员编写代码时，建立以自己名字命名的分支，代码编写后需pull request, 不可直接提交到master分支上
 2. 项目成员更新代码后，在readme中加入必要的说明
 3. 测试文件、大文件请勿上传（写入.gitignore）
+## 数据库版本
+1. elasticsearch 5.5.3
+2. mongodb 3.6.21
 ## 数据字段
 ./others/mongoDB.json
 1. _id DOI或者arxiv编号
