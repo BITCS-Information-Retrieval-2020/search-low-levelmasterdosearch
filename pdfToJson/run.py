@@ -7,6 +7,6 @@ if __name__ == "__main__":
     config_path = './config.json'
     pdfClient = grobid_client(config_path=config_path)
     jsonData = pdfClient.process_pdf(pdf_path) #for use
-
+    
     with open('example.json','w',encoding='utf8') as f:
         json.dump(jsonData,f)

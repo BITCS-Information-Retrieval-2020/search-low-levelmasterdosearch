@@ -26,9 +26,12 @@ class XmlToJson(object):
             return None
 
         # keywords
-        keywords = s_header.find(name='keywords').find_all(name='term')
-        for keyword in keywords:
-            self.keywords.append(keyword.text.strip())
+        #keywords = s_header.find(name='keywords').find_all(name='term')
+        keywords = s_header.find(name='keywords')
+        if(keywords):
+            keywords = keywords.find_all(name='term')
+            for keyword in keywords:
+                self.keywords.append(keyword.text.strip())
         
         # abstract
         self.abstract = s_header.find(name='abstract').text.strip()
