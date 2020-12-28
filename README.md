@@ -68,6 +68,6 @@ search-low-levelmasterdosearch
 12. references 参考文献，列表格式，包括reftitle，refAuthors，refYear，refPublisher （检索模块提供）
 13. videoUrl 视频在网上的url，可能为空
 14. videoPath 视频的相对路径，可能为空
-15. videoContent 包括起始时间列表StartTime 终止时间列表EndTime 和视频文字内容列表 videoText （检索模块提供），可能为空
+15. videoContent 包括起始时间列表startTime 终止时间列表endTime 和视频文字内容列表 videoText （检索模块提供），可能为空
 16. codeUrl 代码url，可能为空
 17. datasetUrl 数据集url，可能为空

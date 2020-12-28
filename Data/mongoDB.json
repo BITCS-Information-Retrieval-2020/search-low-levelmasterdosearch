@@ -57,12 +57,12 @@
   "videoUrl": "url",
   "videoPath": "path",
   "videoContent":{
-    "StartTime": [
+    "startTime": [
       "time1",
       "time2",
       "..."
     ],
-    "EndTime": [
+    "endTime": [
       "time1",
       "time2",
       "..."
