@@ -1,4 +1,4 @@
-支持mp4,avi,mpg,flv,mov,m4a,3gp等格式
+支持mp4,avi,mpg,flv,mov,m4a,3gp等视频格式
 
 调用方法：
   S = Subtitle(path)
