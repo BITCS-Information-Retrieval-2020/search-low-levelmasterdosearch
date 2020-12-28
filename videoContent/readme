@@ -1,0 +1,7 @@
+支持mp4,avi,mpg,flv,mov,m4a,3gp等格式
+
+调用方法：
+  S = Subtitle(path)
+  startTime, endTime, videoText = S.return_subtitle()
+
+其中传入的path为视频所在文件夹
