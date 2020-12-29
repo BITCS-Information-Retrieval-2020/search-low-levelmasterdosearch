@@ -3,5 +3,5 @@ baidu-aip==2.2.18.0
 FFmpeg(音频和视频的解码器库)
 翻译部分：
 python 3.6+
-import google_trans_new
-import jsonpath
+import google_trans_new  ver=1.1.9
+import jsonpath  ver=0.82
