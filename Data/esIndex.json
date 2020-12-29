@@ -20,6 +20,9 @@
 	"publisher": {
 		"type": "keyword"
 	},
+	"cited": {
+		"type": "integer"
+	},
 	"keywords": {
 		"type": "keyword"
 	},
@@ -91,8 +94,16 @@
 				"type": "keyword",
 				"index": false
 			},
-			"videoText": {
+			"textEmbedding": {
+			 	"type": "keyword",
+				"index": false
+			}
+			"textEnglish": {
 				"type": "text"
+			},
+			"textChinese": {
+				"type": "text",
+				"index": false
 			}
 		}
 	},
