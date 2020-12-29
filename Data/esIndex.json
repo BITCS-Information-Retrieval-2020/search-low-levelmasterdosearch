@@ -97,7 +97,7 @@
 			"textEmbedding": {
 			 	"type": "keyword",
 				"index": false
-			}
+			},
 			"textEnglish": {
 				"type": "text"
 			},
