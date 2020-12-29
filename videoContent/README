@@ -3,4 +3,5 @@
 调用方法：
   S = Subtitle(path)
   startTime, endTime, videoText = S.return_subtitle()
-
+文本翻译调用方法：
+videotextChinese = parse_chinese(videoText,site='google')
