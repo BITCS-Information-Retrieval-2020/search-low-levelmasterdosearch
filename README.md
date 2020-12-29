@@ -71,3 +71,16 @@ search-low-levelmasterdosearch
 15. videoContent 包括起始时间列表startTime 终止时间列表endTime 和视频文字内容列表 videoText （检索模块提供），可能为空
 16. codeUrl 代码url，可能为空
 17. datasetUrl 数据集url，可能为空
+## 可以实现的检索功能
+1. 可以指定某一个或若干字段针对用户输入的一个query进行检索，支持的字段：
+* title
+* abstract
+* paper_content
+* video_content（相当于视频检索）
+* authors
+2. 可以指定针对论文发表时间的筛选条件
+3. 可以指定排序的方式
+* year
+* relevance
+4. 可以为同时检索的不同字段设置不同的检索优先级：例如标题中包含该query的分数比在摘要中包含要分数高。
+5. 可以针对某一个单一的视频，返回包含query的视频定位信息（字幕，开始时间，结束时间）
