@@ -67,11 +67,18 @@
       "time2",
       "..."
     ],
-    "videoText": [
+    "allTextEnglish": "alltext",
+    "videoTextEnglish": [
       "text1",
       "text2",
       "..."
-    ]
+    ],
+    "allTextChinese": "alltext",
+    "videoTextChinese": [
+      "text1",
+      "text2",
+      "..."
+    ]    
   },
   "codeUrl": "url",
   "datasetUrl": "url"
