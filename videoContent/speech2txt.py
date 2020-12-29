@@ -106,7 +106,7 @@ class Subtitle(object):
         time_m = time_s // 60
         minute = time_m % 60
         hour = time_m // 60
-        return_string = '%02d:%02d:%02d,%03d'%(hour, minute, second, millisecond)
+        return_string = '%02d:%02d:%02d:%03d'%(hour, minute, second, millisecond)
         return return_string
 
     def split_audio(self, audio_segment, min_silence_len=1000, silence_thresh=-16, keep_silence=100, seek_step=1):
