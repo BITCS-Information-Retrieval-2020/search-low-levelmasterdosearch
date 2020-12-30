@@ -68,9 +68,10 @@ search-low-levelmasterdosearch
 12. references 参考文献，列表格式，包括reftitle，refAuthors，refYear，refPublisher （检索模块提供）
 13. videoUrl 视频在网上的url，可能为空
 14. videoPath 视频的相对路径，可能为空
-15. videoContent 包括起始时间列表startTime 终止时间列表endTime 和视频文字内容列表 videoText （检索模块提供），可能为空
+15. videoContent 包括起始时间startTime 终止时间endTime 视频文字内容textEnglish 对应embedding textEmbedding 和 中文翻译 textChinese （检索模块提供），可能为空
 16. codeUrl 代码url，可能为空
 17. datasetUrl 数据集url，可能为空
+18. cited, 可能为空
 ## 可以实现的检索功能
 1. 可以指定某一个或若干字段针对用户输入的一个query进行检索，支持的字段：
 * title
@@ -90,3 +91,5 @@ search-low-levelmasterdosearch
 Input: 视频路径path    
 Output: 数据字段"videoContent"
 2. 支持mp4,avi,mpg,flv,mov,m4a,3gp等视频格式
+## pdf解析功能
+./pdfToJson
