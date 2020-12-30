@@ -11,13 +11,16 @@ import json
 import shutil
 import hashlib
 import urllib
+from tqdm import tqdm
+
 
 class Subtitle(object):
     def __init__(self, path):
         self.path = path
         self.startTime = []
         self.endTime = []
-        self.videoText = []
+        self.allTextEnglish = ""
+        self.videoTextEnglish = []
     
     def return_subtitle(self):
         video_path = self.path
@@ -39,7 +42,7 @@ class Subtitle(object):
 
         client = self.connect_AipSpeech()
 
-        for i in range(len(chunks)):
+        for i in tqdm(range(len(chunks))):
             chunk = chunks[i]
             start = starts[i]
             end = ends[i]
@@ -53,10 +56,13 @@ class Subtitle(object):
 
             self.startTime.append(self.time_convert(start))
             self.endTime.append(self.time_convert(end))
-            self.videoText.append(subtitle)
+            self.videoTextEnglish.append(subtitle)
 
         shutil.rmtree(chunks_path)
-        return self.startTime, self.endTime, self.videoText
+        
+        self.allTextEnglish = " ".join(self.videoTextEnglish)
+
+        return self.startTime, self.endTime, self.videoTextEnglish, self.allTextEnglish
 
     def convert2wav(self, video_path):
         (folderpath, fullfilename) = os.path.split(video_path)
@@ -65,7 +71,7 @@ class Subtitle(object):
         audio_path = folderpath + '/' + audio_name
         #print(audio_path)
 
-        ffmpegFormatCode = 'ffmpeg -i {0} -f {1} -vn {2}'
+        ffmpegFormatCode = 'ffmpeg -i {0} -f {1} -vn {2} -loglevel quiet'
         os.system(ffmpegFormatCode.format(video_path, 'wav', audio_path))
 
         wav_version = AudioSegment.from_wav(audio_path)
@@ -91,14 +97,13 @@ class Subtitle(object):
             content = fp.read()
         return_parameters = client.asr(content, 'wav', 16000, {'dev_pid': 1737})
         if return_parameters['err_no'] != 0:  # 失败返回
-            print("------------------get this content fail------------------")
+            # print("------------------get this content fail------------------")
             return 
         return_subtitle = str(return_parameters['result'])[2:-2]  # 正确返回，取返回参数中的字幕部分
         #print(return_subtitle)
         return return_subtitle
 
-
-    # 时间格式转换，将毫秒值转换为h:m:s,ms格式
+    # 时间格式转换，将毫秒值转换为h:m:s:ms格式
     def time_convert(self, time_ms):
         millisecond = time_ms % 1000
         time_s = time_ms // 1000
@@ -106,7 +111,7 @@ class Subtitle(object):
         time_m = time_s // 60
         minute = time_m % 60
         hour = time_m // 60
-        return_string = '%02d:%02d:%02d,%03d'%(hour, minute, second, millisecond)
+        return_string = '%02d:%02d:%02d:%03d'%(hour, minute, second, millisecond)
         return return_string
 
     def split_audio(self, audio_segment, min_silence_len=1000, silence_thresh=-16, keep_silence=100, seek_step=1):
@@ -142,11 +147,12 @@ class Subtitle(object):
 
         return chunks, audio_starts, audio_ends
 
-# if __name__ == '__main__':
 
-#     path = os.path.abspath('.') + '/1.mp4'
-#     S = Subtitle(path)
-#     startTime, endTime, videoText = S.return_subtitle()
-#     print(startTime)
-#     print(endTime)
-#     print(videoText)
+if __name__ == '__main__':
+
+    path = os.path.abspath('.') + '/1.mp4'
+    S = Subtitle(path)
+    startTime, endTime, videoTextEnglish, allTextEnglish = S.return_subtitle()
+    print(startTime)
+    print(endTime)
+    print(videoTextEnglish)

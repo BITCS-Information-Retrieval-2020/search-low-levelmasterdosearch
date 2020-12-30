@@ -56,23 +56,22 @@
   ],
   "videoUrl": "url",
   "videoPath": "path",
-  "videoContent":{
-    "startTime": [
-      "time1",
-      "time2",
-      "..."
-    ],
-    "endTime": [
-      "time1",
-      "time2",
-      "..."
-    ],
-    "videoText": [
-      "text1",
-      "text2",
-      "..."
-    ]
-  },
+  "videoContent":[
+    {
+      "startTime": "hh:mm:ss:mms",
+      "endTime": "hh:mm:ss:mms",
+      "textEnglish": "text",
+      "textEmbedding": "",
+      "textChinese": "呵呵"
+    },
+    {
+      "startTime": "hh:mm:ss:mms",
+      "endTime": "hh:mm:ss:mms",
+      "textEnglish": "text",
+      "textChinese": "呵呵"
+    }    
+  ],
   "codeUrl": "url",
-  "datasetUrl": "url"
+  "datasetUrl": "url",
+  "cited": 10
 }
