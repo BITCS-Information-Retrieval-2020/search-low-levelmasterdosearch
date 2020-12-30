@@ -84,3 +84,9 @@ search-low-levelmasterdosearch
 * relevance
 4. 可以为同时检索的不同字段设置不同的检索优先级：例如标题中包含该query的分数比在摘要中包含要分数高。
 5. 可以针对某一个单一的视频，返回包含query的视频定位信息（字幕，开始时间，结束时间）
+## 视频转换功能
+./videoContent
+1. videoContent.py       
+Input: 视频路径path    
+Output: 数据字段"videoContent"
+2. 支持mp4,avi,mpg,flv,mov,m4a,3gp等视频格式
