@@ -32,13 +32,13 @@ class Translation(object):
                 中文字幕chinese_list
 
             """
-        if self.site=='baidu':
-            subtitleChinese=self.__parse_chinese_baidu(self.subtitle)
-            #print('baidu')
-        if self.site=="google":
-            subtitleChinese=self.__parse_chinese_google(self.subtitle)
-            #print("google")
-        
+        if self.site == 'baidu':
+            subtitleChinese = self.__parse_chinese_baidu(self.subtitle)
+            # print('baidu')
+        if self.site == "google":
+            subtitleChinese = self.__parse_chinese_google(self.subtitle)
+            # print("google")
+
         self.videoTextChinese = subtitleChinese
         self.allTextChinese = " ".join(self.videoTextChinese)
         return self.videoTextChinese, self.allTextChinese
@@ -88,9 +88,9 @@ class Translation(object):
                 result_all = response.read().decode("utf-8")
                 result = json.loads(result_all)
 
-                #result = json.load(result["trans_result"])
-                #print(result)
-                #print(result['trans_result'][0]['dst'])
+                # result = json.load(result["trans_result"])
+                # print(result)
+                # print(result['trans_result'][0]['dst'])
                 subtitleChinese.append(result['trans_result'][0]['dst'])
 
             except Exception as e:
@@ -119,7 +119,7 @@ class Translation(object):
         translator = google_translator()
         subtitleChinese = []
         for sub in tqdm(subtitle):
-            text = translator.translate(sub,lang_tgt='zh')
+            text = translator.translate(sub, lang_tgt='zh')
             subtitleChinese.append(text)
         return subtitleChinese
 
@@ -130,4 +130,3 @@ if __name__ == '__main__':
     subtitleChinese, allTextChinese = T.parse_chinese()
     print(subtitleChinese)
     print(allTextChinese)
-

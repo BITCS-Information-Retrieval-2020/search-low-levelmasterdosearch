@@ -8,8 +8,7 @@ def test_embedding(sentence):
         return: the embedding of sentence in json format
     '''
     try:
-        resp = requests.post("localhost/textEmbedding",
-                            data = {'sentence': sentence})
+        resp = requests.post("localhost/textEmbedding", data={'sentence': sentence})
     except Exception:
         return "__ERROR__"
     else:
@@ -22,12 +21,11 @@ def test_similarity(que_sentence, que_list):
     '''
         que_sentence: query English text input
         que_list : text_embedding list
-        return: similarity list 
+        return: similarity list
     '''
     try:
         que_list_js = json.dumps(que_list)
-        resp = requests.post("localhost/calSimilarity",
-                            data = {'que_sentence': que_sentence, 'que_list': que_list_js})
+        resp = requests.post("localhost/calSimilarity", data={'que_sentence': que_sentence, 'que_list': que_list_js})
     except Exception:
         return "__ERROR__"
     else:
@@ -54,4 +52,4 @@ if __name__ == '__main__':
     print(similarity_list)
     que_sentence = "HAHA!"
     similarity_list = test_similarity(que_sentence, e_list)
-    print(similarity_list)    
+    print(similarity_list)

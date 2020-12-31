@@ -11,25 +11,26 @@ import requests
 from xmlToJson import XmlToJson
 import pickle
 
+
 class grobid_client(ApiClient):
 
     def __init__(self, config_path='./config.json'):
         self.config = None
         self._load_config(config_path)
         self.xmlToJson = XmlToJson()
-        #self.errorPdfs = []
+        # self.errorPdfs = []
 
     def _load_config(self, path='./config.json'):
         """
-        Load the json configuration 
+        Load the json configuration
         """
         config_json = open(path).read()
         self.config = json.loads(config_json)
 
         # test if the server is up and running...
-        the_url = 'http://'+self.config['grobid_server']
-        if len(self.config['grobid_port'])>0:
-            the_url += ":"+self.config['grobid_port']
+        the_url = 'http://' + self.config['grobid_server']
+        if len(self.config['grobid_port']) > 0:
+            the_url += ":" + self.config['grobid_port']
         the_url += "/api/isalive"
         r = requests.get(the_url)
         status = r.status_code
@@ -39,7 +40,7 @@ class grobid_client(ApiClient):
         else:
             print("GROBID server is up and running")
 
-    def process_pdf(self, pdf_path, service = 'processFulltextDocument'):
+    def process_pdf(self, pdf_path, service='processFulltextDocument'):
 
         print(pdf_path)
         files = {
@@ -50,11 +51,11 @@ class grobid_client(ApiClient):
                 {'Expires': '0'}
             )
         }
-        
-        the_url = 'http://'+self.config['grobid_server']
-        if len(self.config['grobid_port'])>0:
-            the_url += ":"+self.config['grobid_port']
-        the_url += "/api/"+service
+
+        the_url = 'http://' + self.config['grobid_server']
+        if len(self.config['grobid_port']) > 0:
+            the_url += ":" + self.config['grobid_port']
+        the_url += "/api/" + service
 
         # set the GROBID parameters
         the_data = {}
@@ -64,7 +65,7 @@ class grobid_client(ApiClient):
         if consolidate_header:
             the_data['consolidateHeader'] = '1'
         if consolidate_citations:
-            the_data['consolidateCitations'] = '1'   
+            the_data['consolidateCitations'] = '1'
         if teiCoordinates:
             the_data['teiCoordinates'] = self.config['coordinates']
         """
@@ -87,17 +88,10 @@ class grobid_client(ApiClient):
             try:
                 jsonData = self.xmlToJson.run(res.text)
                 if(jsonData is None):
-                    #self.errorPdfs.append(pdf_path)
+                    # self.errorPdfs.append(pdf_path)
                     print("Generating resulting JSON file %s failed" % pdf_path)
                 return jsonData
-            except Exception as e:  
-               #self.errorPdfs.append(pdf_path)
-               print("Generating resulting JSON file %s failed" % pdf_path)
-               print("Error is %s" % e)
-
-
-    
-
-
-
-
+            except Exception as e:
+                # self.errorPdfs.append(pdf_path)
+                print("Generating resulting JSON file %s failed" % pdf_path)
+                print("Error is %s" % e)

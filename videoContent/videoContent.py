@@ -12,7 +12,7 @@ def get_videoContent(path):
     print("[VideoToContent]")
     S = Subtitle(path)
     startTime, endTime, videoTextEnglish, allTextEnglish = S.return_subtitle()
-    
+
     print("[Translation]")
     T = Translation(videoTextEnglish, site="baidu")
     videoTextChinese, allTextChinese = T.parse_chinese()
@@ -47,4 +47,4 @@ if __name__ == '__main__':
     else:
         with open("../video/2.json", "w", encoding="utf-8") as fout:
             output = json.dumps(video_list, ensure_ascii=False, indent=2, separators=(',', ': '))
-            fout.write(output)  
+            fout.write(output)

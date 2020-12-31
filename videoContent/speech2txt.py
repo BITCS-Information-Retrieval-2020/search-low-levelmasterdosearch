@@ -21,11 +21,11 @@ class Subtitle(object):
         self.endTime = []
         self.allTextEnglish = ""
         self.videoTextEnglish = []
-    
+
     def return_subtitle(self):
         video_path = self.path
         audio_path = self.convert2wav(video_path)
-        #print(audio_path)
+        # print(audio_path)
 
         sound = AudioSegment.from_file(audio_path, format='wav')
         chunks, starts, ends = self.split_audio(sound, min_silence_len=300, silence_thresh=-30, keep_silence=100)
@@ -50,7 +50,7 @@ class Subtitle(object):
             chunk_path = chunks_path + chunk_name
             chunk.export(chunk_path, format='wav')
             subtitle = self.get_subtitle(chunk_path, client)
-            if subtitle is None: 
+            if subtitle is None:
                 continue
             num += 1
 
@@ -59,7 +59,7 @@ class Subtitle(object):
             self.videoTextEnglish.append(subtitle)
 
         shutil.rmtree(chunks_path)
-        
+
         self.allTextEnglish = " ".join(self.videoTextEnglish)
 
         return self.startTime, self.endTime, self.videoTextEnglish, self.allTextEnglish
@@ -69,7 +69,7 @@ class Subtitle(object):
         (filename, extension) = os.path.splitext(fullfilename)
         audio_name = filename + '_temp.wav'
         audio_path = folderpath + '/' + audio_name
-        #print(audio_path)
+        # print(audio_path)
 
         ffmpegFormatCode = 'ffmpeg -i {0} -f {1} -vn {2} -loglevel quiet'
         os.system(ffmpegFormatCode.format(video_path, 'wav', audio_path))
@@ -93,14 +93,14 @@ class Subtitle(object):
     # 调用百度AipSpeech，将符合格式的音频转换为英文文字
     def get_subtitle(self, file_name, client):
         # 识别本地文件，dev_pid=1737表示英语
-        with open(file_name,'rb') as fp:
+        with open(file_name, 'rb') as fp:
             content = fp.read()
         return_parameters = client.asr(content, 'wav', 16000, {'dev_pid': 1737})
         if return_parameters['err_no'] != 0:  # 失败返回
             # print("------------------get this content fail------------------")
-            return 
+            return
         return_subtitle = str(return_parameters['result'])[2:-2]  # 正确返回，取返回参数中的字幕部分
-        #print(return_subtitle)
+        # print(return_subtitle)
         return return_subtitle
 
     # 时间格式转换，将毫秒值转换为h:m:s:ms格式
@@ -111,7 +111,7 @@ class Subtitle(object):
         time_m = time_s // 60
         minute = time_m % 60
         hour = time_m // 60
-        return_string = '%02d:%02d:%02d:%03d'%(hour, minute, second, millisecond)
+        return_string = '%02d:%02d:%02d:%03d' % (hour, minute, second, millisecond)
         return return_string
 
     def split_audio(self, audio_segment, min_silence_len=1000, silence_thresh=-16, keep_silence=100, seek_step=1):
@@ -122,7 +122,7 @@ class Subtitle(object):
             "s -> (s0,s1), (s1,s2), (s2, s3), ..."
             a, b = itertools.tee(iterable)
             next(b, None)
-            return zip(a, b) 
+            return zip(a, b)
 
         start_min = 0
         chunks = []

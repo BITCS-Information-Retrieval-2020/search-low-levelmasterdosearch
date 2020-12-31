@@ -3,6 +3,7 @@ from bs4.element import NavigableString
 import json
 import string
 
+
 class XmlToJson(object):
     def init(self, tei):
         self.soup = BeautifulSoup(tei, 'xml')
@@ -26,16 +27,16 @@ class XmlToJson(object):
             return None
 
         # keywords
-        #keywords = s_header.find(name='keywords').find_all(name='term')
+        # keywords = s_header.find(name='keywords').find_all(name='term')
         keywords = s_header.find(name='keywords')
         if(keywords):
             keywords = keywords.find_all(name='term')
             for keyword in keywords:
                 self.keywords.append(keyword.text.strip())
-        
+
         # abstract
         self.abstract = s_header.find(name='abstract').text.strip()
-        
+
         # authors
         authors = s_header.find_all(name='author')
         for author in authors:
@@ -68,7 +69,7 @@ class XmlToJson(object):
             text = ptext
         else:
             text = ""
-        
+
         for child in tag.children:
             if (isinstance(child, NavigableString)):
                 if (child == '\n'):
@@ -80,16 +81,16 @@ class XmlToJson(object):
             else:
                 if(child.name == 'formula'):
                     continue
-                elif(child.name == 'ref'): #type=bibr/table/figure
+                elif(child.name == 'ref'):  # type=bibr/table/figure
                     continue
                 else:
-                    #text += " " + child.text
+                    # text += " " + child.text
                     child_text = child.text
                     if (child_text[0] in string.punctuation):
                         text = text.strip() + child_text.strip()
                     else:
                         text = text.strip() + " " + child_text.strip()
-        
+
         return text.strip()
 
     def dealBody(self):
@@ -97,7 +98,7 @@ class XmlToJson(object):
         divs = s_body.find_all('div')
         key0 = {}.keys()
         cnt = 3
-        whitespace = ['\n',' ']
+        whitespace = ['\n', ' ']
 
         for i, div in enumerate(divs):
             if ('xmlns' not in div.attrs.keys()):
@@ -133,10 +134,10 @@ class XmlToJson(object):
                                 elif(child.name == 'ref'):
                                     continue
                                 else:
-                                    #p
-                                    _dtext.append(self._getText(child,_ptext))
+                                    # p
+                                    _dtext.append(self._getText(child, _ptext))
                                     _ptext = ""
-                            
+
                             self.subtexts[-1] += _dtext
                             continue
 
@@ -172,8 +173,8 @@ class XmlToJson(object):
                 elif(child.name == 'ref'):
                     continue
                 else:
-                    #p
-                    dtext.append(self._getText(child,ptext))
+                    # p
+                    dtext.append(self._getText(child, ptext))
                     ptext = ""
 
             self.subtitles.append(dtitle)
@@ -267,14 +268,15 @@ class XmlToJson(object):
 
         return self.data
 
+
 if __name__ == '__main__':
     xml_path = "3.xml"
-    with open(xml_path,'r',encoding='utf-8') as f:
+    with open(xml_path, 'r', encoding='utf-8') as f:
         tei = f.read()
-    
+
     tool = XmlToJson()
     data = tool.run(tei)
 
     json_path = "3.json"
-    with open(json_path,'w') as f:
-        json.dump(data,f)
+    with open(json_path, 'w') as f:
+        json.dump(data, f)

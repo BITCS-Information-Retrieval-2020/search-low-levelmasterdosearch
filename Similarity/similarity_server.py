@@ -27,7 +27,7 @@ def get_similarity(que_sentence, que_list):
     '''
         que_sentence: 查询句子文本
         que_list: embedding列表
-        result_similarity: 查询句子与que_list以此比较得到的相似度 
+        result_similarity: 查询句子与que_list以此比较得到的相似度
     '''
     result_similarity = []
     que_embedding = SS.get_embedding(que_sentence).tolist()
@@ -35,7 +35,7 @@ def get_similarity(que_sentence, que_list):
         item_embedding = json.loads(item)
         item_similarity = 1 - SS.similarity(que_embedding, item_embedding)
         result_similarity.append(item_similarity)
-    
+
     return result_similarity
 
 
@@ -50,4 +50,4 @@ def calSimilarity():
 
 
 if __name__ == '__main__':
-    app.run(host="0.0.0.0", port=xxxx, debug=False)
+    app.run(host="0.0.0.0", port=0000, debug=False)
