@@ -5,7 +5,7 @@ from pdfClient import grobid_client
 def get_content(pdf_path):
     config_path = './config.json'
     pdfClient = grobid_client(config_path=config_path)
-    jsonData = pdfClient.process_pdf(pdf_path) #for use
+    jsonData = pdfClient.process_pdf(pdf_path)  # for use
     return jsonData
 
 
@@ -22,4 +22,4 @@ if __name__ == "__main__":
 
     with open("../paper/6.json", "w", encoding="utf-8") as fout:
         output = json.dumps(jsonData, ensure_ascii=False, indent=2, separators=(',', ': '))
-        fout.write(output) 
+        fout.write(output)

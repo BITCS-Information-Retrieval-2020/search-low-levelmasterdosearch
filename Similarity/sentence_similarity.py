@@ -3,6 +3,7 @@ from scipy.spatial.distance import cosine
 from transformers import BertModel, BertTokenizer
 import os
 
+
 class SentenceSimilarity:
 
     def __init__(self, model_path='bert-base-uncased'):
@@ -12,7 +13,6 @@ class SentenceSimilarity:
         self.device = torch.device('cuda:0')
         self.model = self.model.to(self.device)
 
-        
     def text_to_tensor(self, text):
         text = text.strip().lower()
         tokens = self.tokenizer.tokenize(text)
@@ -45,8 +45,6 @@ if __name__ == '__main__':
     e2 = ss.get_embedding(s2)
     e3 = ss.get_embedding(s3)
     print("2")
-    print(1 - ss.similarity(e1,e2))
-    print(1 - ss.similarity(e1,e3))
+    print(1 - ss.similarity(e1, e2))
+    print(1 - ss.similarity(e1, e3))
     print("3")
-    
-        

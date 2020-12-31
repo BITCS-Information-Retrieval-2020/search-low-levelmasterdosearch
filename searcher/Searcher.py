@@ -2,10 +2,12 @@ from elasticsearch5 import Elasticsearch
 from datetime import datetime
 import json
 
+
 class Vividict(dict):
     def __missing__(self, key):
         value = self[key] = type(self)()
         return value
+
 
 class Searcher:
     """Searches papers from elasticsearch database
@@ -22,9 +24,9 @@ class Searcher:
             port: A port number of elasticsearch
             index_name: name of the index you want to search for
             doc_type: name of the doc_type under certain index
-        
+
         """
-        self.es = Elasticsearch([{'host':host, 'port':port}])
+        self.es = Elasticsearch([{'host': host, 'port': port}])
         self.index = index_name
         self.doc_type = doc_type
 
@@ -57,7 +59,7 @@ class Searcher:
 
         if search_info['paper_content']:
             fields.append('paper_content')
-        
+
         # elif search_info['video_content']:
         #     fields.append('video_content')
 
@@ -75,7 +77,7 @@ class Searcher:
 
         Args:
             query: query string from user
-        
+
         Retrun:
             res_list: A list of paper information
         """
@@ -90,7 +92,7 @@ def get_paper_info(res):
 
     Args:
         res: A dict of result from es.search
-    
+
     Return:
         paper_list: A list of dicts, each dict stores information of a paper
         num: length of paper_list
@@ -117,4 +119,3 @@ if __name__ == '__main__':
     res, num = s.search_paper_by_name(search_info)
     print(num)
     print(res)
-    
