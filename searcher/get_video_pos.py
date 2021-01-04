@@ -21,7 +21,7 @@ def test_search(query):
         # 'sort': 'relevance',
         'sort': 'year',
     }
-    res, _ = s.search_paper_by_name(search_info)
+    res, _, _ = s.search_paper_by_name(search_info)
     videoContent = res[0]['videoContent']
     return videoContent
 
