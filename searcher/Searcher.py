@@ -186,7 +186,7 @@ class Searcher:
         return nest
 
 
-    def search_paper_by_name(self, search_info, return_video_pos=False, ):
+    def search_paper_by_name(self, search_info):
         """Search paper by name
         Args:
             query: query string from user
