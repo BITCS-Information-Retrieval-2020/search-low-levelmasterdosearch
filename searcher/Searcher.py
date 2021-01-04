@@ -77,9 +77,8 @@ class Searcher:
         dsl['query']['bool']['should'] = []
 
         if 'integrated' in search_info['query_type']:
-            match = self.get_intergrated_match(search_info['query'], search_info['match']) 
+            match = self.get_integrated_match(search_info['query'], search_info['match']) 
             dsl['query']['bool']['should'] = match
-
         else: # 'advanced_search'
             match = self.get_advanced_match(search_info['match'])
             dsl['query']['bool']['must'] = match
@@ -96,7 +95,7 @@ class Searcher:
 
         return dsl
 
-    def get_intergrated_match(self, query, match):
+    def get_integrated_match(self, query, match):
         """get match of intergrated search 
 
         Args:
@@ -187,9 +186,8 @@ class Searcher:
         return nest
 
 
-    def search_paper_by_name(self, search_info, return_video_pos=False, threshold=0.6):
+    def search_paper_by_name(self, search_info):
         """Search paper by name
-
         Args:
             query: query string from user
 
@@ -200,32 +198,53 @@ class Searcher:
         """
         dsl = self.generate_dsl(search_info)
         res = self.es.search(index=self.index, doc_type=self.doc_type, body=dsl)
-        res_list, num = self.get_paper_info(res)
+        res_list, paper_id, num = self.get_paper_info(res)
 
-        if not return_video_pos:
-            return res_list, num
+        return res_list, paper_id, num
+
+    def get_video_pos_by_paper_id(self, search_info, paper_id, threshold=0.6):
+        """
+        Args:
+            search_info: the same as that in self.generate_dsl()
+            paper_id: A string, given by es
+
+        Return:
+            a sorted video captions' list according to similarity between
+            captions and query
+        """
+
+        paper = self.es.get_source(index=self.index, doc_type=self.doc_type, id=paper_id)
+        
+        return self.get_video_pos_by_paper(search_info=search_info,
+                                           paper=paper,
+                                           threshold=threshold)
+
+    def get_video_pos_by_paper(self, search_info, paper, threshold=0.6):
+        """
+        Args:
+            paper: A dict contained title, abstract ...
+
+        Return:
+            a sorted video captions' list according to similarity between
+            captions and query
+        """
+
+        if 'integrated' in search_info['query_type']:
+            query = search_info['query']
         else:
-            if 'integrated' in search_info['query_type']:
-                query = search_info['query']
-            else:
-                query = search_info['match']['videoContent']
+            query = search_info['match']['videoContent']
 
-            video_pos = []
-            for paper in res_list:
-                if 'videoContent' in paper:
-                    pos = get_video_pos(query=query,
-                                        videoContent=paper['videoContent'],
-                                        threshold=threshold)
-                    video_pos.append(pos)
-                else:
-                    video_pos.append([None])
+        if 'videoContent' not in paper:
+            return [None]
 
-            return res_list, num, video_pos
+        pos = get_video_pos(query=query,
+                            videoContent=paper['videoContent'],
+                            threshold=threshold)
+        return pos
 
     @staticmethod
     def get_paper_info(res):
         """Return raw paper info given es search result
-
         Args:
             res: A dict of result from es.search
 
@@ -234,19 +253,19 @@ class Searcher:
             num: length of paper_list
         """
         paper_list = []
+        paper_id = []
         hits = res['hits']['hits']
         num = res['hits']['total']
         for hit in hits:
-            paper_list.append( hit['_source'])
-        return paper_list, num
+            paper_list.append(hit['_source'])
+            paper_id.append(hit['_id'])
+        return paper_list, paper_id, num
 
     @staticmethod
     def remove_text_embedding(papers):
         """Remove textEmbedding in videoContent
-
         Args:
             papers: A list of paper
-
         """
         for paper in papers:
             if 'videoContent' in paper:
@@ -292,14 +311,19 @@ if __name__ == '__main__':
         # 'sort': 'relevance',
         'sort': 'year',
     }
-    res, num, video_pos = s.search_paper_by_name(search_info, return_video_pos=True)
+
+    res, paper_id, num = s.search_paper_by_name(search_info_2)
     print(num)
-    Searcher.remove_text_embedding(res)
+    pprint(paper_id)
+
+    video_pos = s.get_video_pos_by_paper_id(search_info_2, paper_id[0])
+    pprint(video_pos)
+
+    s.remove_text_embedding(res)
     res[0].pop('paperContent')
     res[0].pop('references')
     res[0].pop('videoContent')
     pprint(res[0])
-    pprint(video_pos[0])
 
     for e in res:
         print(e['year'])
