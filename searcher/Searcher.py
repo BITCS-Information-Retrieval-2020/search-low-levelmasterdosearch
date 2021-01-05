@@ -53,6 +53,9 @@ class Searcher:
                     'yearbefore': 3000,
                 },
                 'sort': 'year',
+                'is_filter': True,
+                'is_rescore': True,
+                'is_cited': False
             }
             or
             {
@@ -68,25 +71,70 @@ class Searcher:
                     'yearbefore': 3000,
                 },
                 'sort': 'relevance',
+                'is_filter': False,
+                'is_rescore': True,
+                'is_cited': False
             }
         Return:
             dsl: a dsl translated from search info
         """
-        dsl = Vividict()
-        dsl['query']['bool']['must'] = []
-        dsl['query']['bool']['should'] = []
+        if search_info['is_cited'] is False:
+            dsl = Vividict()
+            dsl['query']['bool']['must'] = []
+            dsl['query']['bool']['should'] = []
 
-        if 'integrated' in search_info['query_type']:
-            match = self.get_integrated_match(search_info['query'], search_info['match']) 
-            dsl['query']['bool']['should'] = match
-        else: # 'advanced_search'
-            match = self.get_advanced_match(search_info['match'])
-            dsl['query']['bool']['must'] = match
-            
-        year_range = Vividict()
-        year_range['range']['year']['gte'] = search_info['filter'].get('yearfrom', 1000)
-        year_range['range']['year']['lte'] = search_info['filter'].get('yearbefore', 3000)
-        dsl['query']['bool']['must'].append(year_range)
+            if 'integrated' in search_info['query_type']:
+                match = self.get_integrated_match(search_info['query'], search_info['match'])
+                dsl['query']['bool']['should'] = match
+                if search_info['is_filter'] is True:
+                    filter = self.get_filter_query(search_info['query'])
+                    dsl['query']['function_score']['query']['bool']['must'].append(filter)
+                if search_info['is_rescore'] is True:
+                    rescore = self.get_rescore_query(match)
+                    dsl['rescore'] = rescore
+
+            else:  # 'advanced_search'
+                match = self.get_advanced_match(search_info['match'])
+                dsl['query']['bool']['must'] = match
+                if search_info['is_rescore'] is True:
+                    rescore = self.get_rescore_query(match)
+                    dsl['rescore'] = rescore
+
+            year_range = Vividict()
+            year_range['range']['year']['gte'] = search_info['filter'].get('yearfrom', 1000)
+            year_range['range']['year']['lte'] = search_info['filter'].get('yearbefore', 3000)
+            dsl['query']['bool']['must'].append(year_range)
+
+        else:  # cited-function_score
+            dsl = Vividict()
+            dsl['query']['function_score']['query']['bool']['must'] = []
+            dsl['query']['function_score']['query']['bool']['should'] = []
+            dsl['query']['function_score']['field_value_factor'] = []
+            dsl['rescore'] = []
+
+            if 'integrated' in search_info['query_type']:
+                match = self.get_integrated_match(search_info['query'], search_info['match'])
+                dsl['query']['function_score']['query']['bool']['should'] = match
+                cited = self.get_function_factor()
+                dsl['query']['function_score']['field_value_factor'] = cited
+                if search_info['is_filter'] is True:
+                    filter = self.get_filter_query(search_info['query'])
+                    dsl['query']['function_score']['query']['bool']['must'].append(filter)
+                if search_info['is_rescore'] is True:
+                    rescore = self.get_rescore_query(match)
+                    dsl['rescore'] = rescore
+
+            else:  # 'advanced_search'
+                match = self.get_advanced_match(search_info['match'])
+                dsl['query']['bool']['must'] = match
+                if search_info['is_rescore'] is True:
+                    rescore = self.get_rescore_query(match)
+                    dsl['rescore'] = rescore
+
+            year_range = Vividict()
+            year_range['range']['year']['gte'] = search_info['filter'].get('yearfrom', 1000)
+            year_range['range']['year']['lte'] = search_info['filter'].get('yearbefore', 3000)
+            dsl['query']['function_score']['query']['bool']['must'].append(year_range)
 
         if search_info['sort'] == 'year':
             dsl['sort']['year'] = 'desc'
@@ -96,7 +144,7 @@ class Searcher:
         return dsl
 
     def get_integrated_match(self, query, match):
-        """get match of intergrated search 
+        """get match of intergrated search
 
         Args:
             query: query string from user
@@ -132,7 +180,7 @@ class Searcher:
         return res
 
     def get_advanced_match(self, match):
-        """get match of advanced search 
+        """get match of advanced search
 
         Args:
             match: A dict contained title, abstract, paper_content...
@@ -185,6 +233,30 @@ class Searcher:
 
         return nest
 
+    def get_function_factor(self):
+        cited = Vividict()
+        cited['field'] = 'cited'
+        cited['modifier'] = 'log1p'
+        cited['factor'] = 0.5
+        cited['missing'] = 0
+
+        return cited
+
+    def get_filter_query(self, query):
+        filter = Vividict()
+        tag_list = query.split()
+        filter['terms']['abstract'] = tag_list
+
+        return filter
+
+    def get_rescore_query(self, match):
+        rescore = Vividict()
+        rescore['window_size'] = 50
+        rescore['query']['rescore_query'] = match[0]
+        rescore['query']['query_weight'] = 1.2
+        rescore['query']['rescore_query_weight'] = 0.7
+
+        return rescore
 
     def search_paper_by_name(self, search_info):
         """Search paper by name
@@ -214,7 +286,7 @@ class Searcher:
         """
 
         paper = self.es.get_source(index=self.index, doc_type=self.doc_type, id=paper_id)
-        
+
         return self.get_video_pos_by_paper(search_info=search_info,
                                            paper=paper,
                                            threshold=threshold)
@@ -294,6 +366,9 @@ if __name__ == '__main__':
         },
         # 'sort': 'relevance',
         'sort': 'year',
+        'is_filter': True,
+        'is_rescore': True,
+        'is_cited': True
     }
     # 高级检索
     search_info_2 = {
@@ -310,9 +385,12 @@ if __name__ == '__main__':
         },
         # 'sort': 'relevance',
         'sort': 'year',
+        'is_filter': True,
+        'is_rescore': True,
+        'is_cited': False
     }
 
-    res, paper_id, num = s.search_paper_by_name(search_info_2)
+    res, paper_id, num = s.search_paper_by_name(search_info)
     print(num)
     pprint(paper_id)
 
