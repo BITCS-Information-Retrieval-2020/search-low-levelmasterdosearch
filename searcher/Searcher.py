@@ -1,4 +1,3 @@
-import helpers
 from elasticsearch5 import Elasticsearch
 from pprint import pprint
 
@@ -83,13 +82,14 @@ class Searcher:
             dsl = Vividict()
             dsl['query']['bool']['must'] = []
             dsl['query']['bool']['should'] = []
+            dsl['rescore'] = []
 
             if 'integrated' in search_info['query_type']:
                 match = self.get_integrated_match(search_info['query'], search_info['match'])
                 dsl['query']['bool']['should'] = match
                 if search_info['is_filter'] is True:
                     filter = self.get_filter_query(search_info['query'])
-                    dsl['query']['function_score']['query']['bool']['must'].append(filter)
+                    dsl['query']['bool']['must'].append(filter)
                 if search_info['is_rescore'] is True:
                     rescore = self.get_rescore_query(match)
                     dsl['rescore'] = rescore
@@ -252,10 +252,10 @@ class Searcher:
 
     def get_rescore_query(self, match):
         rescore = Vividict()
-        rescore['window_size'] = 50
+        rescore['window_size'] = 100
         rescore['query']['rescore_query'] = match[0]
-        rescore['query']['query_weight'] = 1.2
-        rescore['query']['rescore_query_weight'] = 0.7
+        rescore['query']['query_weight'] = 1.5
+        rescore['query']['rescore_query_weight'] = 0.5
 
         return rescore
 
@@ -380,8 +380,8 @@ if __name__ == '__main__':
         },
         # 'sort': 'relevance',
         'sort': 'year',
-        'is_filter': False,
-        'is_rescore': False,
+        'is_filter': True,
+        'is_rescore': True,
         'is_cited': False
     }
     # 高级检索
