@@ -1,3 +1,4 @@
+import helpers
 from elasticsearch5 import Elasticsearch
 from pprint import pprint
 
@@ -258,7 +259,7 @@ class Searcher:
 
         return rescore
 
-    def search_paper_by_name(self, search_info):
+    def search_paper_by_name(self, search_info, only_top_k=True):
         """Search paper by name
         Args:
             query: query string from user
@@ -266,11 +267,23 @@ class Searcher:
         Return:
             res_list: A list of paper information
             num: The number of returned paper
-            video_pos(optional): A list of video pos of all papers
         """
         dsl = self.generate_dsl(search_info)
-        res = self.es.search(index=self.index, doc_type=self.doc_type, body=dsl)
-        res_list, paper_id, num = self.get_paper_info(res)
+        result = self.es.search(index=self.index, doc_type=self.doc_type, body=dsl, scroll="5m", size=100)
+        # import pdb; pdb.set_trace();
+        sid = result['_scroll_id']
+        scroll_size = result['hits']['total']
+        res_list, paper_id, num = [], [], scroll_size
+        while scroll_size > 0:
+            result = self.es.scroll(scroll_id=sid, scroll="5m")
+            sid = result['_scroll_id']
+            scroll_size = len(result["hits"]["hits"])
+            paper, p_id, _ = self.get_paper_info(result)
+            res_list += paper
+            paper_id += p_id
+
+            if only_top_k:
+                break
 
         return res_list, paper_id, num
 
@@ -328,6 +341,7 @@ class Searcher:
         paper_id = []
         hits = res['hits']['hits']
         num = res['hits']['total']
+        # import pdb; pdb.set_trace();
         for hit in hits:
             paper_list.append(hit['_source'])
             paper_id.append(hit['_id'])
@@ -348,7 +362,7 @@ class Searcher:
 
 if __name__ == '__main__':
 
-    s = Searcher(index_name='test', doc_type='papers')
+    s = Searcher(index_name='paperdb', doc_type='papers')
 
     # 综合检索
     search_info = {
@@ -357,7 +371,7 @@ if __name__ == '__main__':
         'match': {
             'title': True,
             'abstract': False,
-            'paperContent': True,
+            'paperContent': False,
             'videoContent': False,
         },
         'filter': {
@@ -366,9 +380,9 @@ if __name__ == '__main__':
         },
         # 'sort': 'relevance',
         'sort': 'year',
-        'is_filter': True,
-        'is_rescore': True,
-        'is_cited': True
+        'is_filter': False,
+        'is_rescore': False,
+        'is_cited': False
     }
     # 高级检索
     search_info_2 = {
@@ -385,23 +399,28 @@ if __name__ == '__main__':
         },
         # 'sort': 'relevance',
         'sort': 'year',
-        'is_filter': True,
-        'is_rescore': True,
+        'is_filter': False,
+        'is_rescore': False,
         'is_cited': False
     }
 
     res, paper_id, num = s.search_paper_by_name(search_info)
-    print(num)
-    pprint(paper_id)
+    # pprint(res)
+    # pprint(paper_id)
+    # print(num)
+    # exit()
+    print(len(res), len(paper_id), num)
 
-    video_pos = s.get_video_pos_by_paper_id(search_info_2, paper_id[0])
+    video_pos = s.get_video_pos_by_paper_id(search_info, paper_id[0])
     pprint(video_pos)
 
-    s.remove_text_embedding(res)
+    # import pdb; pdb.set_trace();
+    # s.remove_text_embedding(res)
+    pprint(res[0].keys())
     res[0].pop('paperContent')
-    res[0].pop('references')
-    res[0].pop('videoContent')
+    # res[0].pop('references')
+    # res[0].pop('videoContent')
     pprint(res[0])
 
-    for e in res:
-        print(e['year'])
+    # for e in res:
+        # print(e['year'])
