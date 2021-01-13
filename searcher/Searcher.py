@@ -1,8 +1,7 @@
 from elasticsearch5 import Elasticsearch
 from pprint import pprint
 
-# from get_video_pos import get_video_pos
-from get_video_pos import *
+from .get_video_pos import get_video_pos
 
 
 class Vividict(dict):
@@ -10,8 +9,7 @@ class Vividict(dict):
         value = self[key] = type(self)()
         return value
 
-
-class Searcher:
+class Searcher():
     """Searches papers from elasticsearch database
 
     Longer class information....
@@ -78,6 +76,11 @@ class Searcher:
         Return:
             dsl: a dsl translated from search info
         """
+
+        # check search_info
+        if 'integrated' in search_info['query_type']:
+            pass
+
         if search_info['is_cited'] is False:
             dsl = Vividict()
             dsl['query']['bool']['must'] = []
