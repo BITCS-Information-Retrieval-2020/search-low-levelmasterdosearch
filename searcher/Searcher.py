@@ -79,7 +79,11 @@ class Searcher():
 
         # check search_info
         if 'integrated' in search_info['query_type']:
-            pass
+            assert 'query' in search_info, "Integrated search must have query !"
+            assert isinstance(search_info['match']['title'], bool), "Here needs bool type !"
+        else:
+            assert isinstance(search_info['match']['title'], (str, None)), \
+            "Here needs a string or None !"
 
         if search_info['is_cited'] is False:
             dsl = Vividict()
@@ -300,6 +304,8 @@ class Searcher():
             a sorted video captions' list according to similarity between
             captions and query
         """
+        
+        assert isinstance(paper_id, str), "paper_id must be a string, here need only one id !"
 
         paper = self.es.get_source(index=self.index, doc_type=self.doc_type, id=paper_id)
 
@@ -316,6 +322,8 @@ class Searcher():
             a sorted video captions' list according to similarity between
             captions and query
         """
+
+        assert isinstance(paper, dict), "paper must be a dict, here need only one paper !"
 
         if 'integrated' in search_info['query_type']:
             query = search_info['query']
