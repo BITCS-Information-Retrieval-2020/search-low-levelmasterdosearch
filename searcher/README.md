@@ -18,7 +18,7 @@ paper, paper_id, paper_num = S.search_paper_by_name(search_info)
 ```python 
 返回结果说明：
 paper_num   : A int number of paper.
-Paper_id    : A list of string, each string means paper id.
+paper_id    : A list of string, each string means paper id.
 paper       : A list of dicts, each dict stores information of a paper.
 ```
 
@@ -37,19 +37,19 @@ video_pos = S.get_video_pos_by_paper_id(search_info, paper)
 # 综合检索
     search_info = {
         'query_type': 'integrated_search',
-        'query': 'pose', 										# 用户查询的内容
+        'query': string,                                # 用户查询的内容
         'match': {
-            'title': bool, 									# True/False表示是否检索这个字段的内容
+            'title': bool,                              # True/False表示是否检索这个字段的内容
             'abstract': bool,
             'paperContent': bool,
             'videoContent': bool,
         },
         'filter': {
-            'yearfrom': 1000,								# paper的年份限制
+            'yearfrom': 1000,                           # paper的年份限制
             'yearbefore': 3000,
         },
         # 'sort': 'relevance',
-        'sort': 'year',          						# 排序方式：year/cited/relevance
+        'sort': 'year',                                 # 排序方式：year/cited/relevance
         'is_filter': False,                             # 是否先过滤后排序，建议True，提升检索效率
         'is_rescore': False,                            # 是否采用重排序，依据relevance排序时建议True，增强排序效果
         'is_cited': False                               # 是否使用引用量参与排序，由于未爬取引用量字段，只能为False
@@ -58,8 +58,8 @@ video_pos = S.get_video_pos_by_paper_id(search_info, paper)
     search_info_2 = {
         'query_type': 'advanced_search',
         'match': {
-            'title': string,								# 用户查询内容
-            'abstract': string,							# 若不含有某项，设置成 None/False
+            'title': string,                            # 用户查询内容
+            'abstract': string,                         # 若不含有某项，设置成 None/False
             'paperContent': string,
             'videoContent': string,
         },

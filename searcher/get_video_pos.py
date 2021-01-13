@@ -1,29 +1,27 @@
-from Similarity.similarity_test import test_similarity
-from Searcher import Searcher
-from pprint import pprint
+from .Similarity.similarity_test import test_similarity
+# from pprint import pprint
 
-
-def test_search(query):
-    s = Searcher(index_name='test', doc_type='papers')
-    search_info = {
-        'query_type': 'integrated_search',
-        'query': query,
-        'match': {
-            'title': True,
-            'abstract': True,
-            'paperContent': True,
-            'videoContent': False,
-        },
-        'filter': {
-            'yearfrom': 1000,
-            'yearbefore': 3000,
-        },
-        # 'sort': 'relevance',
-        'sort': 'year',
-    }
-    res, _, _ = s.search_paper_by_name(search_info)
-    videoContent = res[0]['videoContent']
-    return videoContent
+# def test_search(query):
+#     s = Searcher_Tool(index_name='test', doc_type='papers')
+#     search_info = {
+#         'query_type': 'integrated_search',
+#         'query': query,
+#         'match': {
+#             'title': True,
+#             'abstract': True,
+#             'paperContent': True,
+#             'videoContent': False,
+#         },
+#         'filter': {
+#             'yearfrom': 1000,
+#             'yearbefore': 3000,
+#         },
+#         # 'sort': 'relevance',
+#         'sort': 'year',
+#     }
+#     res, _, _ = s.search_paper_by_name(search_info)
+#     videoContent = res[0]['videoContent']
+#     return videoContent
 
 def get_video_pos(query, videoContent, threshold=0.6):
     """Return a list of video captions related to user's query
@@ -53,6 +51,7 @@ def get_video_pos(query, videoContent, threshold=0.6):
 
 
 if __name__ == '__main__':
+    # from Searcher import Searcher
     query = 'integrated approach'
     videoContent = test_search(query)
     get_video_pos(query=query, videoContent=videoContent)
