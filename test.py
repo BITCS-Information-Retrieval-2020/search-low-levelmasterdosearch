@@ -29,3 +29,9 @@ print(paper[0].keys())
 video_pos = S.get_video_pos_by_paper_id(search_info, paper_id[0])
 
 print(video_pos[0])
+
+p_id = 'semisuperviseddialoguepolicylearningviastochasticrewardestimation'
+
+video_pos = S.get_video_pos_by_paper_id(search_info, p_id)
+
+print(video_pos)

@@ -1,8 +1,7 @@
 from elasticsearch5 import Elasticsearch
 from pprint import pprint
-
-from .get_video_pos import get_video_pos
-
+from .Similarity.sentence_similarity import SentenceSimilarity
+import json
 
 class Vividict(dict):
     def __missing__(self, key):
@@ -29,6 +28,7 @@ class Searcher():
         self.es = Elasticsearch([{'host': host, 'port': port}])
         self.index = index_name
         self.doc_type = doc_type
+        self.SS = SentenceSimilarity()
 
     def generate_dsl(self, search_info):
         """Generate DSL given query and search settings
@@ -333,7 +333,7 @@ class Searcher():
         if 'videoContent' not in paper:
             return [None]
 
-        pos = get_video_pos(query=query,
+        pos = self.get_video_pos(query=query,
                             videoContent=paper['videoContent'],
                             threshold=threshold)
         return pos
@@ -369,6 +369,49 @@ class Searcher():
                 for v in paper['videoContent']:
                     if 'textEmbedding' in v:
                         v.pop('textEmbedding')
+
+    def get_video_pos(self, query, videoContent, threshold=0.6):
+        """Return a list of video captions related to user's query
+
+        Args:
+            query: english query text
+            videoContent: a list of video caption information
+            threshold: captions whose similarity score is > threshold are returned
+
+        Return:
+            res_list: a sorted video captions' list according to similarity between
+                    captions and query
+        """
+        emd_list = [v.pop('textEmbedding') for v in videoContent]
+        sim_list = self.get_similarity(query, emd_list)
+        if sim_list == '__ERROR__':
+            return sim_list
+
+        res_list = []
+        for s, v in zip(sim_list, videoContent):
+            v['score'] = s
+            if v['score'] > threshold:
+                res_list.append(v)
+            elif query in v['textEnglish']:
+                res_list.append(v)
+        # print('query:' + query)
+        # pprint(res_list)
+        return res_list
+
+    def get_similarity(self, que_sentence, que_list):
+        '''
+            que_sentence: 查询句子文本
+            que_list: embedding列表
+            result_similarity: 查询句子与que_list以此比较得到的相似度
+        '''
+        result_similarity = []
+        que_embedding = self.SS.get_embedding(que_sentence).tolist()
+        for item in que_list:
+            item_embedding = json.loads(item)
+            item_similarity = 1 - self.SS.similarity(que_embedding, item_embedding)
+            result_similarity.append(item_similarity)
+
+        return result_similarity
 
 
 if __name__ == '__main__':
