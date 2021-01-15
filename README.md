@@ -105,6 +105,11 @@ ElasticSearch数据库中，一篇文献的存储字段如下：
 ### 视频解析
 
 //yxx sh
+//转中文字幕部分
+|    功能    | 函数名 | 输入 | 输出 |
+| :--------: | :----: | :--: | :--: |
+| 转中文字幕（Baidu） |  __parse_chinese_baidu  |   英文字母subtitle：list   |   中文字幕chineselist：list   |
+| 转中文字幕（Google）| __parse_chinese_google |   英文字母subtitle：list   |   中文字幕chineselist：list   |
 
 
 
