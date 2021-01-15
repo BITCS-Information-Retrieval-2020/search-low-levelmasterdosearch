@@ -1,6 +1,6 @@
 from elasticsearch5 import Elasticsearch
 from pprint import pprint
-from sentence_similarity import SentenceSimilarity
+from .Similarity.sentence_similarity import SentenceSimilarity
 import json
 
 class Vividict(dict):
