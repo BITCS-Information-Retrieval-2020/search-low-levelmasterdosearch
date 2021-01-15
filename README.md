@@ -18,7 +18,7 @@
 | [@姚潇翛]() |      |      |
 | [@程文浩]() |      |      |
 | [@李易为]() |      |      |
-|  [@孙昊]()  |      |      |
+|  [@孙昊]()  |   3120205524   |   字幕翻译   |
 
 //自己填
 
@@ -110,6 +110,7 @@ ElasticSearch数据库中，一篇文献的存储字段如下：
 | :--------: | :----: | :--: | :--: |
 | 转中文字幕（Baidu） |  __parse_chinese_baidu  |   英文字母subtitle：list   |   中文字幕chineselist：list   |
 | 转中文字幕（Google）| __parse_chinese_google |   英文字母subtitle：list   |   中文字幕chineselist：list   |
+| :--------: | :----: | :--: | :--: |
 通过两种 API的调用，实现了英文字母转中文字幕的需求
 
 
