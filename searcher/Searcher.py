@@ -392,7 +392,7 @@ class Searcher():
             v['score'] = s
             if v['score'] > threshold:
                 res_list.append(v)
-            elif query in videoContent['textEnglish']:
+            elif query in v['textEnglish']:
                 res_list.append(v)
         # print('query:' + query)
         # pprint(res_list)
