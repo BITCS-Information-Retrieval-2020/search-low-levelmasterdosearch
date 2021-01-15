@@ -266,7 +266,7 @@ class Searcher():
 
         return rescore
 
-    def search_paper_by_name(self, search_info, only_top_k=True):
+    def search_paper_by_name(self, search_info, only_top_k=True, k=100):
         """Search paper by name
         Args:
             query: query string from user
@@ -276,7 +276,7 @@ class Searcher():
             num: The number of returned paper
         """
         dsl = self.generate_dsl(search_info)
-        result = self.es.search(index=self.index, doc_type=self.doc_type, body=dsl, scroll="5m", size=100)
+        result = self.es.search(index=self.index, doc_type=self.doc_type, body=dsl, scroll="5m", size=10)
         # import pdb; pdb.set_trace();
         sid = result['_scroll_id']
         scroll_size = result['hits']['total']
@@ -289,7 +289,7 @@ class Searcher():
             res_list += paper
             paper_id += p_id
 
-            if only_top_k:
+            if only_top_k and len(res_list) >= k:
                 break
 
         return res_list, paper_id, num
@@ -329,6 +329,8 @@ class Searcher():
             query = search_info['query']
         else:
             query = search_info['match']['videoContent']
+
+        assert (query is not None)
 
         if 'videoContent' not in paper:
             return [None]

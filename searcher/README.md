@@ -28,7 +28,7 @@ paper       : A list of dicts, each dict stores information of a paper.
 
 ```python
 video_pos = S.get_video_pos_by_paper_id(search_info, paper_id)
-video_pos = S.get_video_pos_by_paper_id(search_info, paper)
+video_pos = S.get_video_pos_by_paper(search_info, paper)
 ```
 
 ##### 4   search_info 格式
