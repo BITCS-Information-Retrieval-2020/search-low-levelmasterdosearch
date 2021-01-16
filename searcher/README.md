@@ -6,7 +6,7 @@
 
 ```python
 import Searcher
-S = Searcher(index_name='paperdb', doc_type='papers')
+S = Searcher()
 ```
 
 ##### 2   检索论文
