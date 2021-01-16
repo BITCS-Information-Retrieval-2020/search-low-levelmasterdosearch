@@ -273,7 +273,11 @@ class Searcher():
 
     def get_filter_query(self, query):
         filter = Vividict()
-        tag_list = query.split()
+        tag_list = []
+        word_list = query.split()
+        for word in word_list:
+            tag_list.append(word.capitalize())
+            tag_list.append(word.lower())
         filter['terms']['abstract'] = tag_list
 
         return filter
