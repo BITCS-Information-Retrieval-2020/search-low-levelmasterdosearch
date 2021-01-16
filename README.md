@@ -437,7 +437,44 @@ pip install mdsearch -i https://pypi.org/simple
 
      <img src=".\images\2.png"/>
 
-- 使用视频定位，（待补充）
+- 使用视频定位，在给定论文（已知论文ID）中搜索所有与**dialog**相关的视频定位：
+
+  1. 构造search_info，并设置p_id为已知论文的ID
+
+     ```python
+     search_info = {
+             'query_type': 'integrated_search',
+             'query': 'dialog',
+             'match': {
+                 'title': True, 
+                 'abstract': True,
+                 'paperContent': True,
+                 'videoContent': True,
+             },
+             'filter': {
+                 'yearfrom': 1000,
+                 'yearbefore': 3000,
+             },
+             # 'sort': 'relevance',
+             'sort': 'year', 
+             'is_filter': False,
+             'is_rescore': False,
+             'is_cited': False
+         }
+     
+     p_id = 'semisuperviseddialoguepolicylearningviastochasticrewardestimation'
+     # 在实际应用中p_id是已知的
+     ```
+
+  2. 调用get_video_pos_by_paper_id函数：
+
+     ```python
+     video_pos = S.get_video_pos_by_paper_id(search_info, p_id)
+     ```
+
+  3. 检索结果如下图：
+
+     <img src=".\images\3.png"/>
 
   
 
