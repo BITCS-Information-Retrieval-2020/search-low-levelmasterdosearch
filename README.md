@@ -630,7 +630,6 @@ pip install mdsearch -i https://pypi.org/simple
    python videoContent.py
    ```
 
-//1234或者15
 
 ## 统计信息
 
