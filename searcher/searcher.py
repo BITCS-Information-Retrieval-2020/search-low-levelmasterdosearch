@@ -1,7 +1,10 @@
-from elasticsearch5 import Elasticsearch
-from pprint import pprint
-from .Similarity.sentence_similarity import SentenceSimilarity
 import json
+from pprint import pprint
+
+from elasticsearch5 import Elasticsearch
+
+from .Similarity.similarity_test import test_similarity
+
 
 class Vividict(dict):
     def __missing__(self, key):
@@ -28,7 +31,6 @@ class Searcher():
         self.es = Elasticsearch([{'host': host, 'port': port}])
         self.index = index_name
         self.doc_type = doc_type
-        self.SS = SentenceSimilarity()
 
     def generate_dsl(self, search_info):
         """Generate DSL given query and search settings
@@ -385,7 +387,7 @@ class Searcher():
                     captions and query
         """
         emd_list = [v.pop('textEmbedding') for v in videoContent]
-        sim_list = self.get_similarity(query, emd_list)
+        sim_list = test_similarity(query, emd_list)
         if sim_list == '__ERROR__':
             return sim_list
 
@@ -396,24 +398,7 @@ class Searcher():
                 res_list.append(v)
             elif query in v['textEnglish']:
                 res_list.append(v)
-        # print('query:' + query)
-        # pprint(res_list)
         return res_list
-
-    def get_similarity(self, que_sentence, que_list):
-        '''
-            que_sentence: 查询句子文本
-            que_list: embedding列表
-            result_similarity: 查询句子与que_list以此比较得到的相似度
-        '''
-        result_similarity = []
-        que_embedding = self.SS.get_embedding(que_sentence).tolist()
-        for item in que_list:
-            item_embedding = json.loads(item)
-            item_similarity = 1 - self.SS.similarity(que_embedding, item_embedding)
-            result_similarity.append(item_similarity)
-
-        return result_similarity
 
 
 if __name__ == '__main__':
