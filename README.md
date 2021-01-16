@@ -26,7 +26,7 @@
 | [@熊婧雯](https://github.com/JaniceXiong) | 3120201085 | 数据字段协商/ES维护/PDF抽取 |
 | [@赫宇欣](https://github.com/lydia07) |   3120201024   |   视频定位/封装Python包   |
 | [@姚翛潇]() | 3220200992 | 视频字幕提取 |
-| [@程文浩]() |      |      |
+| [@程文浩]() | 3120201011     |  基本检索    |
 | [@李易为]() |   3120205496   |   检索优化   |
 |  [@孙昊]()  |   3120205524   |   字幕翻译   |
 
@@ -117,6 +117,7 @@ pip install mdsearch -i https://pypi.org/simple
                'abstract': bool,
                'paperContent': bool,
                'videoContent': bool,
+               'authors': bool,
            },
            'filter': {
                'yearfrom': 1000,                           # paper的年份限制
@@ -133,9 +134,10 @@ pip install mdsearch -i https://pypi.org/simple
            'query_type': 'advanced_search',
            'match': {
                'title': string,                            # 用户查询内容
-               'abstract': string,                         # 若不含有某项，设置成 None/False
+               'abstract': string,                         # 若不含有某项，设置成 None
                'paperContent': string,
                'videoContent': string,
+               'authors': string,
            },
            'filter': {
                'yearfrom': 1000,
