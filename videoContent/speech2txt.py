@@ -130,26 +130,15 @@ class Subtitle(object):
             next(b, None)
             return zip(a, b)
 
-        start_min = 0
         chunks = []
         audio_starts = []
         audio_ends = []
 
-        for (start_i, end_i), (start_ii, end_ii) in pairwise(not_silence_ranges):
-            end_max = end_i + (start_ii - end_i + 1) // 2
-            start_i = max(start_min, start_i - keep_silence)
-            end_i = min(end_max, end_i + keep_silence)
-
-            chunks.append(audio_segment[start_i:end_i])
-            audio_starts.append(start_i)
-            audio_ends.append(end_i)
-            start_min = end_max
-
-        start_last = max(start_min, start_ii - keep_silence)
-        end_last = min(len(audio_segment), end_ii + keep_silence)
-        chunks.append(audio_segment[start_last:end_last])
-        audio_starts.append(start_last)
-        audio_ends.append(end_last)
+        # 根据silence片段切分视频
+        for (start1, end1), (start2, end2) in pairwise(not_silence_ranges):
+            chunks.append(audio_segment[end1:start2])
+            audio_starts.append(end1)
+            audio_ends.append(start2)
 
         return chunks, audio_starts, audio_ends
 
