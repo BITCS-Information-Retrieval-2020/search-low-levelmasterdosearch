@@ -41,7 +41,7 @@
 
 2. 提供给系统展示模块的Python包版本：
 
-   mdsearch 0.0.8
+   mdsearch 0.0.9
 
    
 
@@ -396,7 +396,9 @@ pip install mdsearch -i https://pypi.org/simple
 
   3. Top10检索结果的标题如下图：
 
-     ![1](.\images\1.png)
+     <img src=".\images\1.png"/>
+     
+     
 
 - 使用高级检索，搜索**标题包含“attention”且作者名为"Ashish"**的文献：
 
@@ -433,7 +435,7 @@ pip install mdsearch -i https://pypi.org/simple
 
   3. Top10检索结果的标题如下图：
 
-     ![2](.\images\2.png)
+     <img src=".\images\2.png"/>
 
 - 使用视频定位，（待补充）
 
