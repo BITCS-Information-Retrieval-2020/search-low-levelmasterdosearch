@@ -4,6 +4,7 @@
 
 ## 项目介绍
 
+<<<<<<< 08580ffc541ee86bebe814b3161f1ae8d2022d7c
 搭建一个学术论文的综合搜索引擎，用户可以检索到一篇论文的综合信息，不仅有pdf文件，还有oral视频，数据集，源代码等多模态信息。
 
 本项目为综合搜索引擎的检索模块，从MongoDB中读取爬虫爬到的数据，建立索引，实现综合检索，包括全文检索、字段检索、视频检索等功能。
@@ -15,13 +16,22 @@
 **Low-LevelMasterDoSearch**
 
 > 底层研究生也能做检索。
+=======
+搭建一个学术论文的综合搜索引擎，用户可以检索到一篇论文的综合信息，不仅有pdf文件，还有oral视频，数据集，源代码等多模态信息。      
+本项目为综合搜索引擎的检索模块，从MongoDB中读取爬虫爬到的数据，建立索引，实现综合检索，包括全文检索、字段检索、视频检索等功能。
+>>>>>>> modify readme error
 
+## 队伍名称
+search-low-levelmasterdosearch
 
+> 底层研究生也有梦想，  
+> 做检索我们是专业的。
 
 ## 小组分工
 
 |    姓名     | 学号 | 分工 |
 | :---------: | :--: | :--: |
+<<<<<<< 08580ffc541ee86bebe814b3161f1ae8d2022d7c
 | [@朱婧婧]() |      |      |
 | [@熊婧雯](https://github.com/JaniceXiong) | 3120201085 | 数据字段协商/ES维护/PDF抽取 |
 | [@赫宇欣](https://github.com/lydia07) |   3120201024   |   视频定位/封装Python包   |
@@ -29,6 +39,15 @@
 | [@程文浩]() | 3120201011     |  基本检索    |
 | [@李易为]() |   3120205496   |   检索优化   |
 |  [@孙昊]()  |   3120205524   |   字幕翻译   |
+=======
+| [@朱婧婧](https://github.com/FSMM32768) |   3120201103   |   数据处理   |
+| [@熊婧雯]() |      |      |
+| [@赫宇欣]() |      |      |
+| [@姚潇翛]() |      |      |
+| [@程文浩]() |      |      |
+| [@李易为]() |      |      |
+|  [@孙昊](https://github.com/PlasticMemory)  |   3120205524   |   字幕翻译   |
+>>>>>>> modify readme error
 
 
 
@@ -48,6 +67,7 @@
 
 ## 仓库结构
 
+<<<<<<< 08580ffc541ee86bebe814b3161f1ae8d2022d7c
 ```
 search-low-levelmasterdosearch
 ├─ .gitignore
@@ -79,6 +99,20 @@ search-low-levelmasterdosearch
 ├─ README.md
 └─ test.py 测试样例
 ```
+=======
+- Low-levelMasterDoSearch
+    - Data: 数据定义与处理
+        - mongoDB.json: mongo数据库字段
+        - esIndex.json: es数据库字段
+    - pdfToJson: pdf文本解析
+        - run.py: pdf解析实现
+        - config.json: pdf解析相关配置
+    - searcher: 检索实现
+        - Similarity: 语义相似度计算
+        - searcher.py: 检索功能
+    - videoContent: 视频字幕解析
+        - videoContent.py: 视频字幕提取翻译及词向量计算
+>>>>>>> modify readme error
 
 
 
@@ -542,6 +576,7 @@ pip install mdsearch -i https://pypi.org/simple
    
    返回OK=1，表示成功创建
 
+<<<<<<< 08580ffc541ee86bebe814b3161f1ae8d2022d7c
 #### 检索端
 
 1. 安装相关包
@@ -561,6 +596,11 @@ pip install mdsearch -i https://pypi.org/simple
    - -t：ElasticSearch的IP地址和端口
    - -n：MongoDB中数据库名称
    - -g：ElasticSearch中数据库名称
+=======
+1. 通过mongoDB复制集完成mongo数据库和es数据库的同步
+2. 
+//xjw zjj
+>>>>>>> modify readme error
 
 
 
