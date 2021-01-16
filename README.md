@@ -55,6 +55,7 @@ pip install mdsearch -i https://pypi.org/simple
 ## 代码调用
 
 ### 接口文档
+<span id="doc"></span>
 
 #### 0   整体流程为通过search_info封装用户的查询内容，然后调用相关API返回检索结果。
 
@@ -285,9 +286,9 @@ video_pos = S.get_video_pos_by_paper(search_info, paper)
 |    功能    | 函数名 | 输入 | 输出 |
 | :--------: | :----: | :--: | :--: |
 | 按标题检索 |        |      |      |
-|            |        |      |      |
+| 获取相关视频字幕信息 | get_video_pos | 查询语句，视频详细信息 | 与查询语句匹配的视频字幕与时间信息 |
 
-// hyx cwh lyw
+//cwh lyw
 
 
 
@@ -442,10 +443,19 @@ PDF抽取模块的作用是从下载到本地的PDF文件中抽取结构化数�
 
 
 ## 与展示模块的连接
+展示模块用pip安装的Python包，在代码中import包中的函数和类，即可实现检索模块提供的所有功能。
 
-//hyx cwh lyw
+### 安装方法
+```shell
+pip install mdsearch
+```
+如果已将下载源替换为镜像源，请输入如下命令：
+```shell
+pip install mdsearch -i https://pypi.org/simple
+```
 
-//怎么打包的包，前端怎么调用
+### 使用方法
+详细内容请查阅[接口文档](#doc)
 
 
 
