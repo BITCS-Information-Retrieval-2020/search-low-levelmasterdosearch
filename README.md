@@ -1,7 +1,5 @@
 # Search-low-levelmasterdosearch
 
-[TOC]
-
 ## 项目介绍
 
 搭建一个学术论文的综合搜索引擎，用户可以检索到一篇论文的综合信息，不仅有pdf文件，还有oral视频，数据集，源代码等多模态信息。
@@ -25,10 +23,10 @@
 | [@朱婧婧](https://github.com/FSMM32768) |   3120201103   |   数据处理   |
 | [@熊婧雯](https://github.com/JaniceXiong) | 3120201085 | 数据字段协商/ES维护/PDF抽取 |
 | [@赫宇欣](https://github.com/lydia07) |   3120201024   |   视频定位/封装Python包   |
-| [@姚翛潇]() | 3220200992 | 视频字幕提取 |
-| [@程文浩]() | 3120201011     |  基本检索    |
-| [@李易为]() |   3120205496   |   检索优化   |
-|  [@孙昊]()  |   3120205524   |   字幕翻译   |
+| [@姚翛潇](https://github.com/XCyclone) | 3220200992 | 视频字幕提取 |
+| [@程文浩](https://github.com/cwhao98) | 3120201011     |  基本检索    |
+| [@李易为](https://github.com/LiYiwei-bit) |   3120205496   |   检索优化   |
+|  [@孙昊](https://github.com/PlasticMemory)  |   3120205524   |   字幕翻译   |
 
 
 
@@ -107,50 +105,52 @@ pip install mdsearch -i https://pypi.org/simple
 
 2. 构造search_info
 
+   **综合检索**：
+
    ```python
-   # 综合检索
-       search_info = {
-           'query_type': 'integrated_search',
-           'query': string,                                # 用户查询的内容
-           'match': {
-               'title': bool,                              # True/False表示是否检索这个字段的内容
-               'abstract': bool,
-               'paperContent': bool,
-               'videoContent': bool,
-               'authors': bool,
-           },
-           'filter': {
-               'yearfrom': 1000,                           # paper的年份限制
-               'yearbefore': 3000,
-           },
-           # 'sort': 'relevance',
-           'sort': 'year',                                 # 排序方式：year/cited/relevance
-           'is_filter': False,                             # 是否先过滤后排序，建议True，提升检索效率
-           'is_rescore': False,                            # 是否采用重排序，依据relevance排序时建议True，增强排序效果
-           'is_cited': False                               # 是否使用引用量参与排序，由于未爬取引用量字段，只能为False
-       }
-   # 高级检索
-       search_info_2 = {
-           'query_type': 'advanced_search',
-           'match': {
-               'title': string,                            # 用户查询内容
-               'abstract': string,                         # 若不含有某项，设置成 None
-               'paperContent': string,
-               'videoContent': string,
-               'authors': string,
-           },
-           'filter': {
-               'yearfrom': 1000,
-               'yearbefore': 3000,
-           },
-           'sort': 'year',
-           'is_filter': False,                             # 高级检索无论True还是False都不会进行过滤
-           'is_rescore': False,
-           'is_cited': False
-       }
+   search_info = {
+       'query_type': 'integrated_search',
+       'query': string,                                # 用户查询的内容
+       'match': {
+           'title': bool,                              # True/False表示是否检索这个字段的内容
+           'abstract': bool,
+           'paperContent': bool,
+           'videoContent': bool,
+           'authors': bool,
+       },
+       'filter': {
+           'yearfrom': 1000,                           # paper的年份限制
+           'yearbefore': 3000,
+       },
+      'sort': 'relevance',                            # 排序方式：year/cited/relevance
+      'is_filter': False,                             # 是否先过滤后排序，建议True，提升检索效率
+      'is_rescore': False,                            # 是否采用重排序，依据relevance排序时建议True，增强排序效果
+      'is_cited': False                               # 是否使用引用量参与排序，由于未爬取引用量字段，只能为False
+   }
    ```
 
-   
+   **高级检索**：
+
+   ```python
+   search_info_2 = {
+       'query_type': 'advanced_search',
+       'match': {
+           'title': string,                            # 用户查询内容
+           'abstract': string,                         # 若不含有某项，设置成 None
+           'paperContent': string,
+           'videoContent': string,
+           'authors': string,
+       },
+       'filter': {
+           'yearfrom': 1000,
+           'yearbefore': 3000,
+       },
+       'sort': 'year',
+       'is_filter': False,                             # 高级检索无论True还是False都不会进行过滤
+       'is_rescore': False,
+       'is_cited': False
+   }
+   ```
 
 3. 根据search_info检索论文
 
@@ -360,7 +360,7 @@ pip install mdsearch -i https://pypi.org/simple
 
 ### 测试样例
 
-- 使用综合检索，搜索**标题为“Attention Is All You Need”**的文献：
+- 使用综合检索，搜索**标题为Attention Is All You Need**的文献：
 
   <img src=".\images\3.jpg" alt="3" style="zoom: 33%;" />
 
@@ -400,7 +400,7 @@ pip install mdsearch -i https://pypi.org/simple
      
      
 
-- 使用高级检索，搜索**标题包含“attention”且作者名为"Ashish"**的文献：
+- 使用高级检索，搜索**标题包含attention且作者名为Ashish**的文献：
 
   <img src=".\images\4.jpg" alt="4" style="zoom: 50%;" />
 
@@ -436,6 +436,8 @@ pip install mdsearch -i https://pypi.org/simple
   3. Top10检索结果的标题如下图：
 
      <img src=".\images\2.png"/>
+
+  
 
 - 使用视频定位，在给定论文（已知论文ID）中搜索所有与**dialog**相关的视频定位：
 
@@ -474,7 +476,7 @@ pip install mdsearch -i https://pypi.org/simple
 
   3. 检索结果如下图：
 
-     <img src=".\images\3.png"/>
+     <img src=".\images\5.png" style="zoom: 67%;" />
 
   
 
