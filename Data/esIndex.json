@@ -1,4 +1,7 @@
 {
+	"arxiv_id": {
+		"type": "keyword"
+	},
 	"title": {
 		"type": "text",
 		"analyzer": "autocomplete_analyzer"
@@ -33,6 +36,10 @@
 		"type": "keyword"
 	},
 	"paperUrl": {
+		"type": "keyword",
+		"index": false
+	},
+	"paperPdfUrl": {
 		"type": "keyword",
 		"index": false
 	},
@@ -95,7 +102,7 @@
 				"index": false
 			},
 			"textEmbedding": {
-			 	"type": "keyword",
+				"type": "keyword",
 				"index": false
 			},
 			"textEnglish": {
