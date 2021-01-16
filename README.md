@@ -25,7 +25,7 @@
 | [@朱婧婧]() |      |      |
 | [@熊婧雯](https://github.com/JaniceXiong) | 3120201085 | 数据字段协商/ES维护/PDF抽取 |
 | [@赫宇欣](https://github.com/lydia07) |   3120201024   |   视频定位/封装Python包   |
-| [@姚潇翛]() |      |      |
+| [@姚翛潇]() | 3220200992 | 视频字幕提取 |
 | [@程文浩]() |      |      |
 | [@李易为]() |   3120205496   |   检索优化   |
 |  [@孙昊]()  |   3120205524   |   字幕翻译   |
@@ -414,6 +414,13 @@ video_pos = S.get_video_pos_by_paper(search_info, paper)
 ### 视频解析
 
 //yxx sh
+
+//视频字幕提取
+
+|     功能     |     函数名      |   输入   |                             输出                             |
+| :----------: | :-------------: | :------: | :----------------------------------------------------------: |
+| 视频字幕提取 | return_subtitle | 视频路径 | 每句字幕起始时间startTime：list<br>每句字幕结束时间endTime：list<br>单句字幕（英文）videoTextEnglish：list<br>整体字幕（英文）allTextEnglish：string |
+
 //转中文字幕部分
 
 |    功能    | 函数名 | 输入 | 输出 |
@@ -423,7 +430,46 @@ video_pos = S.get_video_pos_by_paper(search_info, paper)
 
 通过两种 API的调用，实现了英文字母转中文字幕的需求
 
+#### 数据格式
 
+
+
+#### 使用方法
+
+1. 安装依赖包
+
+   ```shell
+   pip install -r requirements.txt
+   ```
+
+2. 实例化`Subtitle`，通过`return_subtitle()`获取英文字幕信息
+
+   ```python
+   S = Subtitle(path)
+   startTime, endTime, videoTextEnglish, allTextEnglish = S.return_subtitle()
+   ```
+
+3. 实例化`Translation`，通过`parse_chinese()`翻译为中文字幕信息
+
+   ```python
+   T = Translation(videoTextEnglish, site="baidu")
+   videoTextChinese, allTextChinese = T.parse_chinese()
+   ```
+
+4. 实例化`Embedding`，通过`text_embedding()`获取字幕embedding
+
+   ```python
+   E = Embedding()
+   embeddings = E.text_embedding(videoTextEnglish)
+   ```
+
+5. 运行`videoContent.py`文件
+
+   ```python
+   python videoContent.py
+   ```
+
+//1234或者15
 
 ## 统计信息
 
