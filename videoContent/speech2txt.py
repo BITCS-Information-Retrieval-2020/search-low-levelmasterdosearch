@@ -83,6 +83,7 @@ class Subtitle(object):
         ffmpegFormatCode = 'ffmpeg -i {0} -f {1} -vn {2} -loglevel quiet'
         os.system(ffmpegFormatCode.format(video_path, 'wav', audio_path))
 
+        # 降噪
         wav_v = AudioSegment.from_wav(audio_path)
         mon = wav_v.set_frame_rate(16000).set_channels(1)
         audio_16k = folderpath + '/' + filename + '.wav'
