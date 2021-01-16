@@ -100,77 +100,79 @@ pip install mdsearch -i https://pypi.org/simple
 
 1. 初始化
 
-```python
-from mdsearch import Searcher
-S = Searcher(index_name='paperdb', doc_type='papers')
-```
+   ```python
+   from mdsearch import Searcher
+   S = Searcher(index_name='paperdb', doc_type='papers')
+   ```
 
-2. 检索论文
+2. 构造search_info
 
-```python
-paper, paper_id, paper_num = S.search_paper_by_name(search_info)
-```
+   ```python
+   # 综合检索
+       search_info = {
+           'query_type': 'integrated_search',
+           'query': string,                                # 用户查询的内容
+           'match': {
+               'title': bool,                              # True/False表示是否检索这个字段的内容
+               'abstract': bool,
+               'paperContent': bool,
+               'videoContent': bool,
+           },
+           'filter': {
+               'yearfrom': 1000,                           # paper的年份限制
+               'yearbefore': 3000,
+           },
+           # 'sort': 'relevance',
+           'sort': 'year',                                 # 排序方式：year/cited/relevance
+           'is_filter': False,                             # 是否先过滤后排序，建议True，提升检索效率
+           'is_rescore': False,                            # 是否采用重排序，依据relevance排序时建议True，增强排序效果
+           'is_cited': False                               # 是否使用引用量参与排序，由于未爬取引用量字段，只能为False
+       }
+   # 高级检索
+       search_info_2 = {
+           'query_type': 'advanced_search',
+           'match': {
+               'title': string,                            # 用户查询内容
+               'abstract': string,                         # 若不含有某项，设置成 None/False
+               'paperContent': string,
+               'videoContent': string,
+           },
+           'filter': {
+               'yearfrom': 1000,
+               'yearbefore': 3000,
+           },
+           'sort': 'year',
+           'is_filter': False,                             # 高级检索无论True还是False都不会进行过滤
+           'is_rescore': False,
+           'is_cited': False
+       }
+   ```
 
-```python 
-返回结果说明：
-paper_num   : A int number of paper.
-paper_id    : A list of string, each string means paper id.
-paper       : A list of dicts, each dict stores information of a paper.
-```
+   
 
+3. 根据search_info检索论文
 
+   ```python
+   paper, paper_id, paper_num = S.search_paper_by_name(search_info)
+   ```
 
-3. 检索单个论文视频中的相关内容(可通过前一步检索论文返回的paper_id或者paper，注意是单个)
+   ```
+   返回结果说明：
+   paper_num   : A int number of paper.
+   paper_id    : A list of string, each string means paper id.
+   paper       : A list of dicts, each dict stores information of a paper.
+   ```
 
-```python
-video_pos = S.get_video_pos_by_paper_id(search_info, paper_id)
-video_pos = S.get_video_pos_by_paper(search_info, paper)
-```
+   
 
-4. search_info 格式
+4. 检索单个论文视频中的相关内容(可通过前一步检索论文返回的paper_id或者paper，注意是单个)
 
-```python
-# 综合检索
-    search_info = {
-        'query_type': 'integrated_search',
-        'query': string,                                # 用户查询的内容
-        'match': {
-            'title': bool,                              # True/False表示是否检索这个字段的内容
-            'abstract': bool,
-            'paperContent': bool,
-            'videoContent': bool,
-        },
-        'filter': {
-            'yearfrom': 1000,                           # paper的年份限制
-            'yearbefore': 3000,
-        },
-        # 'sort': 'relevance',
-        'sort': 'year',                                 # 排序方式：year/cited/relevance
-        'is_filter': False,                             # 是否先过滤后排序，建议True，提升检索效率
-        'is_rescore': False,                            # 是否采用重排序，依据relevance排序时建议True，增强排序效果
-        'is_cited': False                               # 是否使用引用量参与排序，由于未爬取引用量字段，只能为False
-    }
-# 高级检索
-    search_info_2 = {
-        'query_type': 'advanced_search',
-        'match': {
-            'title': string,                            # 用户查询内容
-            'abstract': string,                         # 若不含有某项，设置成 None/False
-            'paperContent': string,
-            'videoContent': string,
-        },
-        'filter': {
-            'yearfrom': 1000,
-            'yearbefore': 3000,
-        },
-        'sort': 'year',
-        'is_filter': False,                             # 高级检索无论True还是False都不会进行过滤
-        'is_rescore': False,
-        'is_cited': False
-    }
-```
+   ```python
+   video_pos = S.get_video_pos_by_paper_id(search_info, paper_id)
+   video_pos = S.get_video_pos_by_paper(search_info, paper)
+   ```
 
-
+   
 
 ## 数据格式
 
@@ -316,18 +318,45 @@ video_pos = S.get_video_pos_by_paper(search_info, paper)
 
    
 
-## 功能概要
+## 检索功能
 
-### 检索
+### 功能概要
 
-|    功能    | 函数名 | 输入 | 输出 |
-| :--------: | :----: | :--: | :--: |
-| 按标题检索 |        |      |      |
-| 获取相关视频字幕信息 | get_video_pos | 查询语句，视频详细信息 | 与查询语句匹配的视频字幕与时间信息 |
+#### 文本检索
 
-//cwh lyw
+1. 支持高级检索和综合检索两种方式
+2. 支持不同检索字段的组合
+3. 支持按年份，引用量，相关性等多种排序方式
+4. 支持筛选论文发表时间及设置不同检索字段优先级（顺序）
 
-#### 
+#### 视频检索
+
+视频字幕信息也可以作为论文的检索依据：
+
+1. 支持定位到匹配视频的具体时间段
+2. 支持根据论文内容或ID等多种视频检索方式
+3. 使用BERT优化句子相似度计算，并封装成服务以提高检索速度
+
+#### 检索优化
+
+1. 支持先过滤再排序，优化检索速度
+2. 支持根据不同指标进行重排序，优化检索质量
+3. 支持根据不同指标综合排序，提高检索多样性
+
+
+
+### 使用方法
+
+展示端通过构造`search_info`，实现对不同字段的检索，并按指定优先级、排序方式返回检索结果，参考[代码调用](#doc)。
+
+|         功能         |          函数名           |         输入          |            输出            |
+| :------------------: | :-----------------------: | :-------------------: | :------------------------: |
+|       检索论文       |   search_paper_by_name    |      search_info      | paper, paper_id, paper_num |
+| 获取相关视频字幕信息 | get_video_pos_by_paper_id | search_info, paper_id |         video_pos          |
+
+
+
+## 附加功能 
 
 ### 文本解析
 
