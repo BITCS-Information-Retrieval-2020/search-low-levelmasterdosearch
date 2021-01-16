@@ -4,7 +4,17 @@
 
 ## 项目介绍
 
-暂时不写
+搭建一个学术论文的综合搜索引擎，用户可以检索到一篇论文的综合信息，不仅有pdf文件，还有oral视频，数据集，源代码等多模态信息。
+
+本项目为综合搜索引擎的检索模块，从MongoDB中读取爬虫爬到的数据，建立索引，实现综合检索，包括全文检索、字段检索、视频检索等功能。
+
+
+
+## 队伍名称
+
+**Low-LevelMasterDoSearch**
+
+> 底层研究生也能做检索。
 
 
 
@@ -36,11 +46,37 @@ flask==1.1.2
 
 ## 仓库结构
 
-- Data：
-- pdfToJson：
+```
+search-low-levelmasterdosearch
+├─ .gitignore
+├─ data 数据定义与处理
+│    ├─ mongoDB.json 	MongoDB数据字段
+│    └─ esIndex.json 	ElasticSearch数据字段 
+├─ pdfToJson PDF解析模块
+│    ├─ client.py
+│    ├─ pdfClient.py 	PDF处理客户端
+│    ├─ config.json  	GROBID参数
+│    ├─ xmlToJson.py 	XML解析代码
+│    ├─ example.json 	示例JSON输出
+│    ├─ example.pdf 	示例PDF输出
+│    └─ run.py 			示例运行代码
+├─ searcher 检索模块
+│    ├─ Similarity		语义相似度计算
+│           ├─ _init_.py
+│           ├─ sentence_similarity.py
+│           ├─ similarity_server.py
+│           └─ similarity_test.py
+│    └─ searcher.py		检索功能代码
+├─ videoContent 视频字幕解析模块
+│    ├─ videoContent.py	视频字幕提取、翻译及词向量计算
+│    ├─ eng2chn.py
+│    ├─ speech2txt.py
+│    └─ textEmbedding.py
+├─ README.md
+└─ requirements.txt 依赖的第三方库
+```
 
-//暂时不写
-
+//待修改，删除不必要的文件
 
 ## 安装方法
 ```shell
@@ -290,9 +326,9 @@ video_pos = S.get_video_pos_by_paper(search_info, paper)
 
 
 
-### pdf抽取
+### 文本解析
 
-PDF抽取模块的作用是从下载到本地的PDF文件中抽取结构化数据，以JSON格式保存，供检索使用。该模块主要分为以下两部分：
+文本解析模块的作用是从下载到本地的PDF文件中抽取结构化数据，以JSON格式保存，供检索使用。该模块主要分为以下两部分：
 
 1. PDF转XML：[GROBID](https://github.com/kermitt2/grobid)是一个机器学习库，用于将原始文档（如PDF）提取、解析和重新构造为结构化XML/TEI编码的文档。在服务器安装并运行GROBID Server后，向指定`ip:port`提交PDF文档后，可以返回XML文档。
 2. XML转JSON：`xmlToJson.py`文件封装了从XML文档中抽取信息，重新构造为JSON格式数据的功能。
@@ -395,28 +431,36 @@ PDF抽取模块的作用是从下载到本地的PDF文件中抽取结构化数�
 
 
 ## 与爬虫模块的连接
+### 模块协调
 
-//xjw zjj
+文本解析模块和视频解析模块是检索端和爬虫端交叉的部分：
+
+- 如果检索端动态处理PDF和视频，则检索端需要具备“得知爬虫端获取了新的PDF或视频”的能力。要么由爬虫端不断通知检索端，要么由检索端不断扫描数据库中已有的数据。且检索端需要将解析后的结构化数据插入数据库，那么爬虫端和检索端都会对数据库有所操作，同步可能出错，过程也不够自然。
+- 如果检索端在爬取结束后，一次性地同步已有数据并解析所有的PDF和视频，那么就不能与增量式爬取的爬虫端联动，也不方便并行开发。
+
+因此，本项目采取的策略是将文本解析模块和视频解析模块打包，供爬虫端调用，爬取的数据和解析的数据都插入MongoDB数据库，再同步到ElasticSearch数据库供检索使用。
 
 ### 同步命令
 
 #### 爬虫端
 
-为MongoDB中数据库创建replica set
+我们需要为MongoDB中数据库创建replica set
 
 1. 启动服务
 
    ```shell
-   mongod --dbpath /data/mongodb/db/ --replSet rs0
+   mongod --dbpath <dbpath> --logpath <logpath> --port <port> --bind_ip_all --fork --replSet rs0
    ```
 
-2. 进入对应数据库
+2. 进入对应数据库，输入初始化命令
 
    ```
-   ./mongo
-   use <DBName>
+   ./mongo <ip:port>
+   use <db>
    rs.initiate()
    ```
+   
+   返回OK=1，表示成功创建
 
 #### 检索端
 
