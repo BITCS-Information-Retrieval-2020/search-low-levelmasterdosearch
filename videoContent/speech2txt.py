@@ -22,31 +22,37 @@ class Subtitle(object):
         self.allTextEnglish = ""
         self.videoTextEnglish = []
 
+    # 返回起始时间，结束时间，英文字幕
     def return_subtitle(self):
+
+        # 将视频转化为音频
         video_path = self.path
         audio_path = self.convert2wav(video_path)
-        # print(audio_path)
 
+        # 切分音频
         sound = AudioSegment.from_file(audio_path, format='wav')
-        chunks, starts, ends = self.split_audio(sound, min_silence_len=300, silence_thresh=-30, keep_silence=100)
+        chunks, starts, ends = self.split_audio(sound, min_silence_len=500, silence_thresh=-30, keep_silence=100)
         os.remove(audio_path)
 
+        # 将切分的音频保存
         (filepath, tempfilename) = os.path.split(audio_path)
         (filename, extension) = os.path.splitext(tempfilename)
-        chunks_folder_name = filename + '_audio_chunks'
+        chunks_folder_name = filename + '-chunks'
         chunks_path = filepath + '/' + chunks_folder_name + '/'
         if not os.path.exists(chunks_path):
             os.mkdir(chunks_path)
 
         num = 0
 
-        client = self.connect_AipSpeech()
+        # 连接百度AipSpeech
+        client = self.connect_client()
 
+        # 对每一段音频获取字幕
         for i in tqdm(range(len(chunks))):
             chunk = chunks[i]
             start = starts[i]
             end = ends[i]
-            chunk_name = filename + ',%04d,%d,%d.wav' % (i, start, end)
+            chunk_name = filename + '-%05d-%d-%d.wav' % (i, start, end)
             chunk_path = chunks_path + chunk_name
             chunk.export(chunk_path, format='wav')
             subtitle = self.get_subtitle(chunk_path, client)
@@ -54,35 +60,38 @@ class Subtitle(object):
                 continue
             num += 1
 
+            # 转换时间格式
             self.startTime.append(self.time_convert(start))
             self.endTime.append(self.time_convert(end))
             self.videoTextEnglish.append(subtitle)
 
+        # 删除音频分段文件
         shutil.rmtree(chunks_path)
 
         self.allTextEnglish = " ".join(self.videoTextEnglish)
 
         return self.startTime, self.endTime, self.videoTextEnglish, self.allTextEnglish
 
+    # 将视频转化为音频
     def convert2wav(self, video_path):
         (folderpath, fullfilename) = os.path.split(video_path)
         (filename, extension) = os.path.splitext(fullfilename)
-        audio_name = filename + '_temp.wav'
+        audio_name = filename + '-temp.wav'
         audio_path = folderpath + '/' + audio_name
-        # print(audio_path)
 
+        # 调用ffmpeg
         ffmpegFormatCode = 'ffmpeg -i {0} -f {1} -vn {2} -loglevel quiet'
         os.system(ffmpegFormatCode.format(video_path, 'wav', audio_path))
 
-        wav_version = AudioSegment.from_wav(audio_path)
-        mono = wav_version.set_frame_rate(16000).set_channels(1)
-        audio_16k_path = folderpath + '/' + filename + '.wav'
-        mono.export(audio_16k_path, format='wav', codec='pcm_s16le')
-        os.remove(audio_path)  # 删除生成的中间wav文件
-        return audio_16k_path
+        wav_v = AudioSegment.from_wav(audio_path)
+        mon = wav_v.set_frame_rate(16000).set_channels(1)
+        audio_16k = folderpath + '/' + filename + '.wav'
+        mon.export(audio_16k, format='wav', codec='pcm_s16le')
+        os.remove(audio_path)
+        return audio_16k
 
     # 连接百度AipSpeech客户端
-    def connect_AipSpeech(self):
+    def connect_client(self):
         # 调用百度API的用户名，密码等
         APP_ID = '23191035'
         API_KEY = 'WAfGnCoaGkm1gog3ZGQ1t4Cn'
@@ -90,31 +99,28 @@ class Subtitle(object):
         client = AipSpeech(APP_ID, API_KEY, SECRET_KEY)
         return client
 
-    # 调用百度AipSpeech，将符合格式的音频转换为英文文字
+    # 调用百度AipSpeech，获取单句字幕
     def get_subtitle(self, file_name, client):
-        # 识别本地文件，dev_pid=1737表示英语
+
         with open(file_name, 'rb') as fp:
             content = fp.read()
-        return_parameters = client.asr(content, 'wav', 16000, {'dev_pid': 1737})
-        if return_parameters['err_no'] != 0:  # 失败返回
-            # print("------------------get this content fail------------------")
+        return_content = client.asr(content, 'wav', 16000, {'dev_pid': 1737})
+        if return_content['err_no'] != 0:
             return
-        return_subtitle = str(return_parameters['result'])[2:-2]  # 正确返回，取返回参数中的字幕部分
-        # print(return_subtitle)
-        return return_subtitle
+        subtitle = str(return_content['result'])[2:-2]
+        return subtitle
 
-    # 时间格式转换，将毫秒值转换为h:m:s:ms格式
-    def time_convert(self, time_ms):
-        millisecond = time_ms % 1000
-        time_s = time_ms // 1000
-        second = time_s % 60
-        time_m = time_s // 60
-        minute = time_m % 60
-        hour = time_m // 60
-        return_string = '%02d:%02d:%02d:%03d' % (hour, minute, second, millisecond)
-        return return_string
+    # 转换时间格式为h:m:s:ms格式
+    def time_convert(self, time):
+        millisecond = time % 1000
+        second = (time // 1000) % 60
+        minute = ((time // 1000) // 60) % 60
+        hour = ((time // 1000) // 60) // 60
+        time_string = '%02d:%02d:%02d:%03d' % (hour, minute, second, millisecond)
+        return time_string
 
-    def split_audio(self, audio_segment, min_silence_len=1000, silence_thresh=-16, keep_silence=100, seek_step=1):
+    # 切分音频
+    def split_audio(self, audio_segment, min_silence_len=500, silence_thresh=-30, keep_silence=100, seek_step=1):
 
         not_silence_ranges = detect_nonsilent(audio_segment, min_silence_len, silence_thresh, seek_step)
 
@@ -130,7 +136,7 @@ class Subtitle(object):
         audio_ends = []
 
         for (start_i, end_i), (start_ii, end_ii) in pairwise(not_silence_ranges):
-            end_max = end_i + (start_ii - end_i + 1) // 2  # +1 for rounding with integer division
+            end_max = end_i + (start_ii - end_i + 1) // 2
             start_i = max(start_min, start_i - keep_silence)
             end_i = min(end_max, end_i + keep_silence)
 
