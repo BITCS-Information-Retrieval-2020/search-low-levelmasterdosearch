@@ -324,7 +324,7 @@ pip install mdsearch -i https://pypi.org/simple
 
 #### 文本检索
 
-1. 支持高级检索和综合检索两种方式
+1. 支持综合检索和高级检索两种方式
 2. 支持不同检索字段的组合
 3. 支持按年份，引用量，相关性等多种排序方式
 4. 支持筛选论文发表时间及设置不同检索字段优先级（顺序）
@@ -347,12 +347,12 @@ pip install mdsearch -i https://pypi.org/simple
 
 ### 使用方法
 
-展示端通过构造`search_info`，实现对不同字段的检索，并按指定优先级、排序方式返回检索结果，参考[代码调用](#doc)。
+展示端通过构造`search_info`，实现对不同字段的检索，并按指定优先级、排序方式返回检索结果，参考[代码调用](#doc)。综合检索和高级检索的`query_type`分别是`integrated_search`和`advanced_search`。当检索到某篇包含视频的论文后，还可以进一步定位视频字幕信息。
 
 |         功能         |          函数名           |         输入          |            输出            |
 | :------------------: | :-----------------------: | :-------------------: | :------------------------: |
 |       检索论文       |   search_paper_by_name    |      search_info      | paper, paper_id, paper_num |
-| 获取相关视频字幕信息 | get_video_pos_by_paper_id | search_info, paper_id |         video_pos          |
+| 获取论文视频字幕信息 | get_video_pos_by_paper_id | search_info, paper_id |         video_pos          |
 
 
 
