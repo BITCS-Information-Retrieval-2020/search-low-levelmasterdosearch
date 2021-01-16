@@ -53,20 +53,18 @@ pip install mdsearch -i https://pypi.org/simple
 
 
 ## 代码调用
-
-### 接口文档
 <span id="doc"></span>
 
-#### 0   整体流程为通过search_info封装用户的查询内容，然后调用相关API返回检索结果。
+整体流程为通过search_info封装用户的查询内容，然后调用相关API返回检索结果。
 
-#### 1   初始化
+1. 初始化
 
 ```python
 from mdsearch import Searcher
 S = Searcher(index_name='paperdb', doc_type='papers')
 ```
 
-#### 2   检索论文
+2. 检索论文
 
 ```python
 paper, paper_id, paper_num = S.search_paper_by_name(search_info)
@@ -81,14 +79,14 @@ paper       : A list of dicts, each dict stores information of a paper.
 
 
 
-#### 3   检索单个论文视频中的相关内容(可通过前一步检索论文返回的paper_id或者paper，注意是单个)
+3. 检索单个论文视频中的相关内容(可通过前一步检索论文返回的paper_id或者paper，注意是单个)
 
 ```python
 video_pos = S.get_video_pos_by_paper_id(search_info, paper_id)
 video_pos = S.get_video_pos_by_paper(search_info, paper)
 ```
 
-#### 4   search_info 格式
+4. search_info 格式
 
 ```python
 # 综合检索
@@ -455,7 +453,7 @@ pip install mdsearch -i https://pypi.org/simple
 ```
 
 ### 使用方法
-详细内容请查阅[接口文档](#doc)
+详细内容请查阅[代码调用](#doc)
 
 
 
