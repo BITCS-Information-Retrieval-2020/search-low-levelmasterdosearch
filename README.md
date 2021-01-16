@@ -30,18 +30,20 @@
 | [@李易为]() |   3120205496   |   检索优化   |
 |  [@孙昊]()  |   3120205524   |   字幕翻译   |
 
-//自己填
-
 
 
 ## 版本说明
 
-ElasticSearch 5.0.0
-scipy==1.5.4
-torch==1.7.1
-transformers==4.1.1
-flask==1.1.2
+1. 数据库版本：
 
+   MongoDB 3.6.21
+   ElasticSearch 5.0.0
+
+2. 提供给系统展示模块的Python包版本：
+
+   mdsearch 0.0.8
+
+   
 
 
 ## 仓库结构
@@ -53,12 +55,13 @@ search-low-levelmasterdosearch
 │    ├─ mongoDB.json 	MongoDB数据字段
 │    └─ esIndex.json 	ElasticSearch数据字段 
 ├─ pdfToJson PDF解析模块
+│    ├─ requirements.txt
 │    ├─ client.py
 │    ├─ pdfClient.py 	PDF处理客户端
 │    ├─ config.json  	GROBID参数
 │    ├─ xmlToJson.py 	XML解析代码
 │    ├─ example.json 	示例JSON输出
-│    ├─ example.pdf 	示例PDF输出
+│    ├─ example.pdf 	示例PDF输入
 │    └─ run.py 			示例运行代码
 ├─ searcher 检索模块
 │    ├─ Similarity		语义相似度计算
@@ -68,17 +71,19 @@ search-low-levelmasterdosearch
 │           └─ similarity_test.py
 │    └─ searcher.py		检索功能代码
 ├─ videoContent 视频字幕解析模块
+│    ├─ requirements.txt
 │    ├─ videoContent.py	视频字幕提取、翻译及词向量计算
 │    ├─ eng2chn.py
 │    ├─ speech2txt.py
 │    └─ textEmbedding.py
 ├─ README.md
-└─ requirements.txt 依赖的第三方库
+└─ test.py 测试样例
 ```
 
-//待修改，删除不必要的文件
+
 
 ## 安装方法
+
 ```shell
 pip install mdsearch
 ```
@@ -88,8 +93,8 @@ pip install mdsearch -i https://pypi.org/simple
 ```
 
 
+
 ## 代码调用
-<span id="doc"></span>
 
 整体流程为通过search_info封装用户的查询内容，然后调用相关API返回检索结果。
 
@@ -164,8 +169,6 @@ video_pos = S.get_video_pos_by_paper(search_info, paper)
         'is_cited': False
     }
 ```
-
-
 
 
 
@@ -324,7 +327,7 @@ video_pos = S.get_video_pos_by_paper(search_info, paper)
 
 //cwh lyw
 
-
+#### 
 
 ### 文本解析
 
@@ -498,109 +501,3 @@ pip install mdsearch -i https://pypi.org/simple
 
 ### 使用方法
 详细内容请查阅[代码调用](#doc)
-
-
-
-## 待完成的功能
-
-//都可以写
-
-
-
-## 特别说明
-# 只有聪明的人才能看到代码
-<br/>
-<br/>
-<br/>
-<br/>
-<br/>
-<br/>
-<br/>
-<br/>
-<br/>
-<br/>
-<br/>
-<br/>
-<br/>
-<br/>
-<br/>
-<br/>
-<br/>
-<br/>
-<br/>
-<br/>
-<br/>
-<br/>
-<br/>
-<br/>
-<br/>
-<br/>
-<br/>
-<br/>
-<br/>
-<br/>
-<br/>
-<br/>
-<br/>
-<br/>
-<br/>
-<br/>
-
-
-# 检索模块
-## 项目简介
-搭建一个学术论文的综合搜索引擎，用户可以检索到一篇论文的综合信息，不仅有pdf文件，还有oral视频，数据集，源代码等多模态信息。  
-从MongoDB中读取爬虫爬到的数据，建立索引，实现综合检索。
-## 队伍名称
-search-low-levelmasterdosearch
-## 项目成员
-朱婧婧 熊婧雯 赫宇欣 姚翛潇 程文浩 李易为 孙昊
-## 注意事项
-1. 项目成员编写代码时，建立以自己名字命名的分支，代码编写后需pull request, 不可直接提交到master分支上
-2. 项目成员更新代码后，在readme中加入必要的说明
-3. 测试文件、大文件请勿上传（写入.gitignore）
-4. 所有提交的代码，必须经过flake8的检验
-## 数据库版本
-1. elasticsearch 5.5.3
-2. mongodb 3.6.21
-## 数据字段
-./others/mongoDB.json
-1. _id DOI或者arxiv编号
-2. title 文章标题
-3. authors 列表类型，每个作者包括firstName字段和lastName字段（复杂名字统一归到firstName里）
-4. year YYYY格式
-5. publisher 发表期刊（对期刊进行实体对齐，给检索模块返回一个期刊列表集合）
-6. keywords 可能为空（检索模块提供）
-7. abstract 优先使用网站上的爬取结果（爬虫提供）；否则写入pdf解析结果（检索提供）
-8. subjects 论文分类（arxiv）
-9. paperUrl 论文在网上的url
-10. paperPath 论文的相对路径
-11. paperContent 论文pdf解析后的内容，text 全文内容，subtitiles 章节标题，subtexts 章节内容（检索模块提供）
-12. references 参考文献，列表格式，包括reftitle，refAuthors，refYear，refPublisher （检索模块提供）
-13. videoUrl 视频在网上的url，可能为空
-14. videoPath 视频的相对路径，可能为空
-15. videoContent 包括起始时间startTime 终止时间endTime 视频文字内容textEnglish 对应embedding textEmbedding 和 中文翻译 textChinese （检索模块提供），可能为空
-16. codeUrl 代码url，可能为空
-17. datasetUrl 数据集url，可能为空
-18. cited, 可能为空
-## 可以实现的检索功能
-1. 可以指定某一个或若干字段针对用户输入的一个query进行检索，支持的字段：
-* title
-* abstract
-* paper_content
-* video_content（相当于视频检索）
-* authors
-2. 可以指定针对论文发表时间的筛选条件
-3. 可以指定排序的方式
-* year
-* relevance
-4. 可以为同时检索的不同字段设置不同的检索优先级：例如标题中包含该query的分数比在摘要中包含要分数高。
-5. 可以针对某一个单一的视频，返回包含query的视频定位信息（字幕，开始时间，结束时间）
-## 视频转换功能
-./videoContent
-1. videoContent.py       
-Input: 视频路径path    
-Output: 数据字段"videoContent"
-2. 支持mp4,avi,mpg,flv,mov,m4a,3gp等视频格式
-## pdf解析功能
-./pdfToJson
