@@ -3,6 +3,7 @@ from pprint import pprint
 from .Similarity.similarity_test import test_similarity
 import json
 
+
 class Vividict(dict):
     def __missing__(self, key):
         value = self[key] = type(self)()
@@ -293,7 +294,7 @@ class Searcher():
 
         return res_list, paper_id, num
 
-    def get_video_pos_by_paper_id(self, search_info, paper_id, threshold=0.6):
+    def get_video_pos_by_paper_id(self, search_info, paper_id, threshold=0.8):
         """
         Args:
             search_info: the same as that in self.generate_dsl()
@@ -312,7 +313,7 @@ class Searcher():
                                            paper=paper,
                                            threshold=threshold)
 
-    def get_video_pos_by_paper(self, search_info, paper, threshold=0.6):
+    def get_video_pos_by_paper(self, search_info, paper, threshold=0.8):
         """
         Args:
             paper: A dict contained title, abstract ...
@@ -371,7 +372,7 @@ class Searcher():
                     if 'textEmbedding' in v:
                         v.pop('textEmbedding')
     @staticmethod
-    def get_video_pos(query, videoContent, threshold=0.6):
+    def get_video_pos(query, videoContent, threshold=0.8):
         """Return a list of video captions related to user's query
 
         Args:
@@ -383,6 +384,7 @@ class Searcher():
             res_list: a sorted video captions' list according to similarity between
                     captions and query
         """
+
         emd_list = [v.pop('textEmbedding') for v in videoContent]
         sim_list = test_similarity(query, emd_list)
         if sim_list == '__ERROR__':
@@ -395,6 +397,7 @@ class Searcher():
                 res_list.append(v)
             elif query in v['textEnglish']:
                 res_list.append(v)
+
         # print('query:' + query)
         # pprint(res_list)
         return res_list
