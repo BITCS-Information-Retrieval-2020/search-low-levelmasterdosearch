@@ -9,6 +9,7 @@ class Vividict(dict):
         value = self[key] = type(self)()
         return value
 
+
 class Searcher():
     """Searches papers from elasticsearch database
 
@@ -82,8 +83,7 @@ class Searcher():
             assert 'query' in search_info, "Integrated search must have query !"
             assert isinstance(search_info['match']['title'], bool), "Here needs bool type !"
         else:
-            assert isinstance(search_info['match']['title'], (str, None)), \
-            "Here needs a string or None !"
+            assert isinstance(search_info['match']['title'], (str, None)), "Here needs a string or None !"
 
         if search_info['is_cited'] is False:
             dsl = Vividict()
@@ -316,7 +316,7 @@ class Searcher():
             a sorted video captions' list according to similarity between
             captions and query
         """
-        
+
         assert isinstance(paper_id, str), "paper_id must be a string, here need only one id !"
 
         paper = self.es.get_source(index=self.index, doc_type=self.doc_type, id=paper_id)
@@ -347,9 +347,7 @@ class Searcher():
         if 'videoContent' not in paper:
             return [None]
 
-        pos = self.get_video_pos(query=query,
-                            videoContent=paper['videoContent'],
-                            threshold=threshold)
+        pos = self.get_video_pos(query=query, videoContent=paper['videoContent'], threshold=threshold)
         return pos
 
     @staticmethod
@@ -383,6 +381,7 @@ class Searcher():
                 for v in paper['videoContent']:
                     if 'textEmbedding' in v:
                         v.pop('textEmbedding')
+
     @staticmethod
     def get_video_pos(query, videoContent, threshold=0.8):
         """Return a list of video captions related to user's query
@@ -416,5 +415,4 @@ class Searcher():
 
 
 if __name__ == '__main__':
-
-   print('wo ta ya ya de fo le')
+    print('wo ta ya ya de fo le')
