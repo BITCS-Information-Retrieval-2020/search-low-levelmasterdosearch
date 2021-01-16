@@ -471,8 +471,7 @@ pip install mdsearch -i https://pypi.org/simple
             "textEnglish": "sentences", 
             "textEmbedding": "[embedding...]",
             "textChinese": "translation"
-        },
-        ...
+        }
     ]
 }
 ~~~
