@@ -184,6 +184,10 @@ class Searcher():
             nest = self.get_nested_query_videoContent(query)
             res.append(nest)
 
+        if match['authors']:
+            nest = self.get_nested_query_authors(query)
+            res.append(nest)
+
         return res
 
     def get_advanced_match(self, match):
@@ -212,7 +216,25 @@ class Searcher():
             nest = self.get_nested_query_videoContent(match['videoContent'])
             res.append(nest)
 
+        if match['authors']:
+            nest = self.get_nested_query_authors(match['authors'])
+            res.append(nest)
+
         return res
+
+    def get_nested_query_authors(self, query):
+
+        nest = Vividict()
+        nest['nested']['path'] = 'authors'
+        nest['nested']['score_mode'] = 'max'
+
+        tmp = Vividict()
+        fields = ['authors.firstName', 'authors.lastName']
+        tmp['multi_match']['fields'] = fields
+        tmp['multi_match']['query'] = query
+        nest['nested']['query']['bool']['must'] = tmp
+
+        return nest
 
     def get_nested_query_paperContent(self, query):
 
@@ -265,33 +287,19 @@ class Searcher():
 
         return rescore
 
-    def search_paper_by_name(self, search_info, only_top_k=True, k=100):
+    def search_paper_by_name(self, search_info, only_top_k=True, size=100):
         """Search paper by name
         Args:
             query: query string from user
 
         Return:
-            res_list: A list of paper information
-            num: The number of returned paper
+            paper_list: A list of paper information
+            paper_id  : A list of paper id
+            paper_num : The number of returned paper
         """
         dsl = self.generate_dsl(search_info)
-        result = self.es.search(index=self.index, doc_type=self.doc_type, body=dsl, scroll="5m", size=10)
-        # import pdb; pdb.set_trace();
-        sid = result['_scroll_id']
-        scroll_size = result['hits']['total']
-        res_list, paper_id, num = [], [], scroll_size
-        while scroll_size > 0:
-            result = self.es.scroll(scroll_id=sid, scroll="5m")
-            sid = result['_scroll_id']
-            scroll_size = len(result["hits"]["hits"])
-            paper, p_id, _ = self.get_paper_info(result)
-            res_list += paper
-            paper_id += p_id
-
-            if only_top_k and len(res_list) >= k:
-                break
-
-        return res_list, paper_id, num
+        result = self.es.search(index=self.index, doc_type=self.doc_type, body=dsl, size=size)
+        return self.get_paper_info(result)
 
     def get_video_pos_by_paper_id(self, search_info, paper_id, threshold=0.6):
         """
@@ -402,65 +410,4 @@ class Searcher():
 
 if __name__ == '__main__':
 
-    s = Searcher(index_name='paperdb', doc_type='papers')
-
-    # 综合检索
-    search_info = {
-        'query_type': 'integrated_search',
-        'query': 'pose',
-        'match': {
-            'title': True,
-            'abstract': False,
-            'paperContent': False,
-            'videoContent': False,
-        },
-        'filter': {
-            'yearfrom': 1000,
-            'yearbefore': 3000,
-        },
-        # 'sort': 'relevance',
-        'sort': 'year',
-        'is_filter': True,
-        'is_rescore': True,
-        'is_cited': False
-    }
-    # 高级检索
-    search_info_2 = {
-        'query_type': 'advanced_search',
-        'match': {
-            'title': 'estimating',
-            'abstract': 'RGB',
-            'paperContent': 'pose',
-            'videoContent': 'pixel',
-        },
-        'filter': {
-            'yearfrom': 1000,
-            'yearbefore': 3000,
-        },
-        # 'sort': 'relevance',
-        'sort': 'year',
-        'is_filter': False,
-        'is_rescore': False,
-        'is_cited': False
-    }
-
-    res, paper_id, num = s.search_paper_by_name(search_info)
-    # pprint(res)
-    # pprint(paper_id)
-    # print(num)
-    # exit()
-    print(len(res), len(paper_id), num)
-
-    video_pos = s.get_video_pos_by_paper_id(search_info, paper_id[0])
-    pprint(video_pos)
-
-    # import pdb; pdb.set_trace();
-    # s.remove_text_embedding(res)
-    pprint(res[0].keys())
-    res[0].pop('paperContent')
-    # res[0].pop('references')
-    # res[0].pop('videoContent')
-    pprint(res[0])
-
-    # for e in res:
-        # print(e['year'])
+   print('wo ta ya ya de fo le')
