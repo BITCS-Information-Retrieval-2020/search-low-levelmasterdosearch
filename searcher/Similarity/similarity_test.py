@@ -25,7 +25,7 @@ def test_similarity(que_sentence, que_list):
     '''
     try:
         que_list_js = json.dumps(que_list)
-        resp = requests.post("localhost/calSimilarity", data={'que_sentence': que_sentence, 'que_list': que_list_js})
+        resp = requests.post("http://101.124.42.4:1235/calSimilarity", data={'que_sentence': que_sentence, 'que_list': que_list_js})
     except Exception:
         return "__ERROR__"
     else:
