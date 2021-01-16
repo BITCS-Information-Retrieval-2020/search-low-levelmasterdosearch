@@ -22,7 +22,7 @@
 
 |    姓名     | 学号 | 分工 |
 | :---------: | :--: | :--: |
-| [@朱婧婧]() |      |      |
+| [@朱婧婧](https://github.com/FSMM32768) |   3120201103   |   数据处理   |
 | [@熊婧雯](https://github.com/JaniceXiong) | 3120201085 | 数据字段协商/ES维护/PDF抽取 |
 | [@赫宇欣](https://github.com/lydia07) |   3120201024   |   视频定位/封装Python包   |
 | [@姚翛潇]() | 3220200992 | 视频字幕提取 |
@@ -444,25 +444,155 @@ pip install mdsearch -i https://pypi.org/simple
 
 ### 视频解析
 
-//yxx sh
+视频解析模块的作用是将爬虫组提供的论文讲解视频中的语音，识别为文字，并记录每段文字在视频中出现的时间段，并对英文字幕进行翻译，得到中英文双语字幕信息，此外，还需要计算字幕的Embedding词向量，以JSON格式进行存储，供视频检索定位模块使用。该模块主要分为以下三部分：
 
-//视频字幕提取
-
-|     功能     |     函数名      |   输入   |                             输出                             |
-| :----------: | :-------------: | :------: | :----------------------------------------------------------: |
-| 视频字幕提取 | return_subtitle | 视频路径 | 每句字幕起始时间startTime：list<br>每句字幕结束时间endTime：list<br>单句字幕（英文）videoTextEnglish：list<br>整体字幕（英文）allTextEnglish：string |
-
-//转中文字幕部分
-
-|    功能    | 函数名 | 输入 | 输出 |
-| :--------: | :----: | :--: | :--: |
-| 转中文字幕（Baidu） |  __parse_chinese_baidu  |   英文字母subtitle：list   |   中文字幕chineselist：list   |
-| 转中文字幕（Google）| __parse_chinese_google |   英文字母subtitle：list   |   中文字幕chineselist：list   |
-
-通过两种 API的调用，实现了英文字母转中文字幕的需求
+1. 视频字幕抽取：使用ffmpeg及百度api等完成视频到文字的转换，并记录出现时间，即抽取字幕。
+2. 视频字幕翻译：调用baidu和google的api，将第一步得到的字幕进行翻译，得到双语字幕。
+3. 字幕词向量计算：使用BERT模型计算第一步得到字幕的词向量，用于后续检索功能中的相似度计算。
 
 #### 数据格式
 
+对一段视频的字幕抽取结果JSON化格式如下：
+
+~~~json
+{
+    "_id": "paperid", 
+    "videoContent": [
+        {
+            "startTime": "00:00:04:276", 
+            "endTime": "00:00:04:759", 
+            "textEnglish": "hello", 
+            "textEmbedding": "[0.15500609576702118, 0.09710085391998291,.]",
+            "textChinese": "你好"
+        },
+        {
+            "startTime": "00:00:05:276", 
+            "endTime": "00:00:05:759", 
+            "textEnglish": "sentences", 
+            "textEmbedding": "[embedding...]",
+            "textChinese": "translation"
+        },
+        ...
+    ]
+}
+~~~
+
+#### 函数接口
+
+1. 主函数
+
+   ~~~python
+   def get_videoContent(
+       path: str
+   ) -> List[Dict]
+   ~~~
+
+   * Parameters
+
+     * path: `str`
+
+       待解析视频路径
+
+   * Returns
+
+     * video_list: `List[Dict]`
+
+       视频解析结果列表
+
+2. 视频字幕提取
+
+   ~~~python
+   class Subtitle(object):
+       def __init__(
+       	self,
+           path: str
+       )
+       def return_subtitle(
+       	self
+       ) -> List[str], List[str], List[str], str 
+   ~~~
+
+   * Parameters
+     * path: `str`
+
+       待解析视频路径
+
+   * Returns
+
+     * startTime: `List[str]`
+
+       字幕开始时间列表
+
+     * endTime: `List[str]`
+
+       字幕结束时间列表
+
+     * videoTextEnglish: `List[str]`
+
+       字幕抽取文本列表
+
+     * allTextEnglish: `str`
+
+       字幕抽取总文本
+
+3. 视频字幕翻译
+
+   ~~~python
+   class Translation(object):
+       def __init__(
+       	self,
+           english_list: List[str],
+           site: str = "baidu"
+       )
+       def parse_chinese(
+       	self
+       ) -> List[str], str 
+   ~~~
+
+   * Parameters
+
+     * english_list: `List[str]`
+
+       待翻译字幕列表
+
+     * site: `str`, optional (default = "baidu")
+
+       翻译接口，默认值为"baidu"，可选["google", "baidu"]
+
+   * Returns
+
+     * videoTextChinese: `List[str]`
+
+       翻译列表
+
+     * allTextChinese: `str`
+
+       翻译总文本
+
+4. 字幕词向量计算
+
+   ~~~python
+   class Embedding(object):
+   	def __init__(
+       	self
+       )
+       def text_embedding(
+       	self,
+           sentences: str
+       ) -> List[str]
+   ~~~
+
+   * Parameters
+
+     * sentences: `str`
+
+       待计算词向量的字幕文本
+
+   * Returns
+
+     * embedding_list: `List[str]`
+
+       字幕文本的词向量表示
 
 
 #### 使用方法
