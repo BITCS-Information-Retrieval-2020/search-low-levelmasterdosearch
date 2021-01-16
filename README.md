@@ -358,6 +358,87 @@ pip install mdsearch -i https://pypi.org/simple
 
 
 
+### 测试样例
+
+- 使用综合检索，搜索**标题为“Attention Is All You Need”**的文献：
+
+  <img src=".\images\3.jpg" alt="3" style="zoom: 33%;" />
+
+  1. 构造search_info:
+
+     ```python
+     search_info = {
+             'query_type': 'integrated_search',
+             'query': 'Attention Is All You Need',
+             'match': {
+                 'title': True, 
+                 'abstract': False,
+                 'paperContent': False,
+                 'videoContent': False,
+                 'authors': False
+             },
+             'filter': {
+                 'yearfrom': 1000,
+                 'yearbefore': 3000,
+             },
+             'sort': 'relevance',
+             'is_filter': False,
+             'is_rescore': False,
+             'is_cited': False
+         }
+     ```
+
+  2. 调用search_paper_by_name函数
+
+     ```python
+     paper, paper_id, paper_num = S.search_paper_by_name(search_info)
+     ```
+
+  3. Top10检索结果的标题如下图：
+
+     ![1](.\images\1.png)
+
+- 使用高级检索，搜索**标题包含“attention”且作者名为"Ashish"**的文献：
+
+  <img src=".\images\4.jpg" alt="4" style="zoom: 50%;" />
+
+  1. 构造search_info_2：
+
+     ```python
+     search_info_2 = {
+             'query_type': 'advanced_search',
+             'match': {
+                 'title': 'attention',                            
+                 'abstract': None,
+                 'paperContent': None,
+                 'videoContent': None,
+                 'authors': "Ashish"
+             },
+             'filter': {
+                 'yearfrom': 1000,
+                 'yearbefore': 3000,
+             },
+             'sort': 'relevance',
+             'is_filter': False,                             
+             'is_rescore': False,
+             'is_cited': False
+         }
+     ```
+
+  2. 调用search_paper_by_name函数：
+
+     ```python
+     paper, paper_id, paper_num = S.search_paper_by_name(search_info_2)
+     ```
+
+  3. Top10检索结果的标题如下图：
+
+     ![2](.\images\2.png)
+
+- 使用视频定位，（待补充）
+
+  
+
 ## 附加功能 
 
 ### 文本解析
