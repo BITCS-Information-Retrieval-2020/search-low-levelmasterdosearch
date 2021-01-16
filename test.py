@@ -1,4 +1,4 @@
-from searcher import *
+from mdsearch import Searcher
 
 S = Searcher(index_name='paperdb', doc_type='papers')
 
