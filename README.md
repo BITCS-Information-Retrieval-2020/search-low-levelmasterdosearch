@@ -35,6 +35,8 @@
 1. 数据库版本：
 
    MongoDB 3.6.21
+   
+   
    ElasticSearch 5.0.0
 
 2. 提供给系统展示模块的Python包版本：
@@ -476,7 +478,7 @@ pip install mdsearch -i https://pypi.org/simple
 
   3. 检索结果如下图：
 
-     <img src=".\images\5.png" style="zoom: 67%;" />
+     <img src=".\images\5.png" style="zoom: 50%;" />
 
   
 
