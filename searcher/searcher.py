@@ -15,7 +15,7 @@ class Searcher():
     Longer class information....
 
     """
-    def __init__(self, index_name, doc_type, host='10.1.114.114', port=9200):
+    def __init__(self, index_name='paperdb', doc_type='papers', host='10.1.114.114', port=9200):
         """Initialize a search engine
 
         Args:
