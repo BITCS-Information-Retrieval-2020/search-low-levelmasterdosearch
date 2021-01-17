@@ -1,4 +1,4 @@
-import pprint
+from pprint import pprint
 
 from mdsearch import Searcher
 
