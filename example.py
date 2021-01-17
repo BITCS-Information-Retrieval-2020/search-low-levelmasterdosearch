@@ -81,6 +81,6 @@ p_id = 'semisuperviseddialoguepolicylearningviastochasticrewardestimation'
 
 video_pos = S.get_video_pos_by_paper_id(search_info_3, p_id)
 
-print('------Case 3:高级检索------')
+print('------Case 3:视频定位------')
 for p in video_pos:
     pprint(p)
